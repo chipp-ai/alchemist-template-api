@@ -1,4 +1,7 @@
 # Local Dev Ports
 
-Run `./scripts/dev.sh --api-port PORT --port VITE_PORT` to start the dev stack.
-This file will be updated with your actual ports on startup.
+| Service | Port | URL |
+|---------|------|-----|
+| Deno API | __API_PORT__ | http://localhost:__API_PORT__ |
+
+When docs reference `__API_PORT__`, use **your API port**.

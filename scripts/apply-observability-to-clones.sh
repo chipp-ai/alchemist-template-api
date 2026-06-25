@@ -12,16 +12,14 @@
 #   scripts/apply-observability-to-clones.sh --all   # walks ~/.alchemist/projects/*
 #
 # What it does:
-#   • Copies 4 new files from this template into the target:
+#   • Copies 3 new files from this template into the target:
 #       src/observability/jsonl-writer.ts
 #       src/observability/envelope.ts
 #       src/api/routes/observability/index.ts
-#       web/src/lib/observability/breadcrumbs.ts
-#   • Idempotently patches 4 existing files:
+#   • Idempotently patches 3 existing files:
 #       app.ts                    (import + route mount)
 #       src/lib/logger.ts         (import + obs hook in emit)
 #       src/lib/dev-activity.ts   (import + obs hooks in recordRequest/Error)
-#       web/src/main.ts           (import + installBreadcrumbs call)
 #   • Skips CLAUDE.md (customer-tunable; we don't want to clobber).
 #
 # Failure mode: any patch step that can't apply (because the target
@@ -59,8 +57,7 @@ copy_new_files() {
   for rel in \
       "src/observability/jsonl-writer.ts" \
       "src/observability/envelope.ts" \
-      "src/api/routes/observability/index.ts" \
-      "web/src/lib/observability/breadcrumbs.ts"
+      "src/api/routes/observability/index.ts"
   do
     mkdir -p "$(dirname "$target/$rel")"
     cp "$TEMPLATE_ROOT/$rel" "$target/$rel"
@@ -267,45 +264,6 @@ PY
   ok "patch deno.json"
 }
 
-patch_web_main_ts() {
-  local file="$1/web/src/main.ts"
-  if [ ! -f "$file" ]; then warn "missing $file"; return; fi
-  if grep -q "installBreadcrumbs" "$file"; then
-    skip "web/src/main.ts already patched"
-    return
-  fi
-  # Prepend the import + the install call right after the first three
-  # canonical imports (mount + App + app.css).
-  python3 - "$file" <<'PY'
-import sys
-path = sys.argv[1]
-src = open(path).read()
-if "installBreadcrumbs" in src:
-    sys.exit(0)
-addition = '''import { installBreadcrumbs } from "./lib/observability/breadcrumbs";
-
-// Install observability hooks BEFORE the rest of bootup so the
-// store + DevPanel + app mount are captured. No-op in production.
-installBreadcrumbs();
-
-'''
-# Insert after the third import line (mount, App, app.css).
-lines = src.split("\n")
-insert_at = None
-import_count = 0
-for i, line in enumerate(lines):
-    if line.startswith("import "):
-        import_count += 1
-        if import_count == 3:
-            insert_at = i + 1
-            break
-if insert_at is None:
-    insert_at = 0
-out = "\n".join(lines[:insert_at]) + "\n" + addition + "\n".join(lines[insert_at:])
-open(path, "w").write(out)
-PY
-  ok "patch web/src/main.ts"
-}
 
 # ── Driver ─────────────────────────────────────────────────────────
 
@@ -314,8 +272,8 @@ apply_to() {
   if [ ! -d "$target" ]; then
     fail "target not a directory: $target"
   fi
-  if [ ! -f "$target/app.ts" ] || [ ! -d "$target/web" ]; then
-    warn "$target doesn't look like a template clone (missing app.ts or web/), skipping"
+  if [ ! -f "$target/app.ts" ]; then
+    warn "$target doesn't look like a template clone (missing app.ts), skipping"
     return
   fi
   printf "\n→ %s\n" "$target"
@@ -323,7 +281,6 @@ apply_to() {
   patch_app_ts "$target"
   patch_logger_ts "$target"
   patch_dev_activity_ts "$target"
-  patch_web_main_ts "$target"
   patch_deno_json "$target"
 }
 
