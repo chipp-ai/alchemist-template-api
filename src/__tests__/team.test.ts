@@ -5,15 +5,19 @@
  * Coverage:
  *   - Role hierarchy (rankOf, hasAtLeast, can, canManage)
  *   - Capability map exhaustiveness (every capability has a min-role
- *     entry; the server's lib/roles.ts and the client's
- *     web/src/lib/permissions.ts mirror each other exactly)
- *   - Invite token generator (uniqueness, URL-safety, length)
+ *     entry in the server's lib/roles.ts)
+ *   - roleLabel display mapping ('member' → 'Editor')
+ *   - Registry invariants (every Capability is tested; ASSIGNABLE_ROLES
+ *     excludes 'owner')
  *   - Source-shape lints:
- *     - publicRoutes / isPublicRoute is wired so /invite/:token
- *       resolves as public
- *     - Settings.svelte renders pending invites + role dropdowns
  *     - app.ts mounts /api/invite
- *     - Migration 003 backfills 'member' → 'editor'
+ *     - org routes guard team.* with requireCapability
+ *     - DELETE /members/:userId soft-disconnects (no hard delete)
+ *     - Migration 003 adds 'editor' + backfills 'member' → 'editor'
+ *
+ * This is the headless API template — role/permission logic is
+ * server-only; there is no client-side permissions mirror to keep
+ * in sync.
  *
  * The end-to-end DB tests (createInvite + acceptInvite) need a live
  * Postgres. Those run against the Docker compose DB during local
@@ -24,14 +28,14 @@
 import { assertEquals, assertStringIncludes } from "@std/assert";
 import {
   ASSIGNABLE_ROLES,
-  CAPABILITIES,
   can,
   canManage,
+  CAPABILITIES,
+  type Capability,
   hasAtLeast,
   rankOf,
-  ROLES,
   roleLabel,
-  type Capability,
+  ROLES,
 } from "@/lib/roles.ts";
 
 function deno(name: string, fn: () => void | Promise<void>) {
@@ -167,16 +171,18 @@ deno("registry: every Capability is tested above (lint)", () => {
   }
 });
 
-deno("registry: ASSIGNABLE_ROLES excludes 'owner' (invite-can-never-confer-ownership invariant)", () => {
-  // Inviting someone to be the OWNER would let an admin steal the
-  // org from the actual owner. ASSIGNABLE_ROLES is the public API
-  // surface — never let it carry 'owner'. Migration to a different
-  // owner is a separate flow (deferred from v1).
-  assertEquals(ASSIGNABLE_ROLES.includes("owner" as never), false);
-});
+deno(
+  "registry: ASSIGNABLE_ROLES excludes 'owner' (invite-can-never-confer-ownership invariant)",
+  () => {
+    // Inviting someone to be the OWNER would let an admin steal the
+    // org from the actual owner. ASSIGNABLE_ROLES is the public API
+    // surface — never let it carry 'owner'. Migration to a different
+    // owner is a separate flow (deferred from v1).
+    assertEquals(ASSIGNABLE_ROLES.includes("owner" as never), false);
+  },
+);
 
 // ── Client mirror lint ────────────────────────────────────────────────────
-
 
 // ── Source-shape lints ────────────────────────────────────────────────────
 
@@ -195,12 +201,14 @@ deno("source: org routes guard team.* with requireCapability", async () => {
   const src = await Deno.readTextFile(
     new URL("../api/routes/org/index.ts", import.meta.url),
   );
-  for (const cap of [
-    "team.invite",
-    "team.update_role",
-    "team.remove",
-    "org.update",
-  ]) {
+  for (
+    const cap of [
+      "team.invite",
+      "team.update_role",
+      "team.remove",
+      "org.update",
+    ]
+  ) {
     assertStringIncludes(
       src,
       `requireCapability("${cap}")`,
@@ -261,5 +269,3 @@ deno("source: migration 003 adds 'editor' enum value + backfills 'member'", asyn
       "(organization_id, email) for pending invites",
   );
 });
-
-

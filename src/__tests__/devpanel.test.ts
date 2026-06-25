@@ -11,7 +11,8 @@
  *     work from request 0)
  *   - POST /api/dev/app-state: stores the client snapshot for
  *     subsequent GETs
- *   - Production gate: dev routes self-404 when NODE_ENV=production
+ *   - Dev gate: dev routes + activity ring are opt-in via
+ *     ALCHEMIST_DEV_ROUTES (fail-closed; off in production)
  *
  * Note: This is the headless API template (buildProfile: headless).
  * There is no web/ SPA, so client-side source-shape lints are skipped.
@@ -130,17 +131,18 @@ deno("source: app.ts mounts recentActivityMiddleware gated on dev flag", async (
   }
 });
 
-
 // (Headless API template: no web/ SPA, so no client push pipeline to lint.)
 
 deno("source: dev-routes register POST and GET /app-state", async () => {
   const src = await Deno.readTextFile(
     new URL("../api/routes/dev/index.ts", import.meta.url),
   );
-  for (const expected of [
-    'devRoutes.post(\n  "/app-state"',
-    'devRoutes.get("/app-state"',
-  ]) {
+  for (
+    const expected of [
+      'devRoutes.post(\n  "/app-state"',
+      'devRoutes.get("/app-state"',
+    ]
+  ) {
     if (!src.includes(expected)) {
       throw new Error(
         `dev routes must register \`${expected.replace(/\n\s+/g, " ")}\` — ` +
@@ -180,15 +182,12 @@ deno("e2e: GET /api/dev/app-state returns server context even with no client pus
 
   // Markdown is rendered with the "no client snapshot yet" copy.
   assertStringIncludes(body.markdown as string, "No client snapshot received yet");
-
-  // Restore env.
-  
 });
 
 deno("e2e: POST /api/dev/app-state persists the client snapshot for subsequent GETs", async () => {
   __resetDevActivityForTests();
-  
-  
+  // Enable dev routes for this test (the router is gated on ALCHEMIST_DEV_ROUTES).
+  Deno.env.set("ALCHEMIST_DEV_ROUTES", "1");
 
   const { devRoutes } = await import("@/api/routes/dev/index.ts");
 
@@ -219,13 +218,11 @@ deno("e2e: POST /api/dev/app-state persists the client snapshot for subsequent G
   assertExists(client);
   assertEquals(client.timestamp, snapshot.timestamp);
   assertStringIncludes(body.markdown as string, "fake markdown");
-
-  
 });
 
 deno("e2e: GET /api/dev/app-state?format=markdown returns text/markdown", async () => {
-  
-  
+  // Enable dev routes for this test (the router is gated on ALCHEMIST_DEV_ROUTES).
+  Deno.env.set("ALCHEMIST_DEV_ROUTES", "1");
 
   const { devRoutes } = await import("@/api/routes/dev/index.ts");
 
@@ -239,6 +236,4 @@ deno("e2e: GET /api/dev/app-state?format=markdown returns text/markdown", async 
   );
   const text = await res.text();
   assertStringIncludes(text, "Server Context");
-
-  
 });
