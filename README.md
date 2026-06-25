@@ -1,3 +1,5 @@
+> **⚠️ Headless API template.** Derived from `alchemist-template` with the Svelte SPA (`web/`) removed — this serves a **Deno + Hono JSON API only**, no frontend. Same stack otherwise (Deno 2 · TypeScript · Hono 4 · Kysely + postgres · zod · Arctic · Stripe · date-fns). Use the **web-app** template if you need a UI; the **mcp-server** template if you need an MCP server. The headless build profile is handled platform-side at deploy.
+
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.svg">
