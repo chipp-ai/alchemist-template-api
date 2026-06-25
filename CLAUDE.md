@@ -451,10 +451,10 @@ mcp__dev-server__dev_app_state({ format: "markdown" })   # Markdown, layered rep
 
 GETs `/api/dev/app-state` on the running customer app. Returns one merged payload:
 
-- **Client side** — current route, viewport, every `defineStore`-registered store snapshot, and `recentErrors` (uncaught JS errors captured by `window.onerror` / `unhandledrejection`).
+- **Client side** — current route, viewport, store snapshots (populated only when a `defineStore`-instrumented frontend is connected), and `recentErrors`. In a headless deployment this section will be empty — the server-side half is what matters.
 - **Server side** — the last 20 HTTP requests with method/path/status/duration, and any captured server errors.
 
-**Use this first** for any "is the running app in the state I expect?" question. It answers "what page is the user on / what's in the auth store / did my last PATCH succeed / did the server throw" with a single tool call. The structured JSON (default) is the L1 view; `format: "markdown"` is the L2 deep-dive (same content, formatted for reading).
+**Use this first** for any "is the running app in the state I expect?" question. It answers "did my last PATCH succeed / did the server throw / what were the recent HTTP requests" with a single tool call. The structured JSON (default) is the L1 view; `format: "markdown"` is the L2 deep-dive (same content, formatted for reading).
 
 What `dev_app_state` does NOT capture: plain `console.log` / `console.warn` / `console.info` calls. Those need Tier 2.
 
@@ -542,27 +542,25 @@ curl -sS -b /tmp/jar.txt http://localhost:8000/api/auth/me
 
 ### Recipe — populate mock domain data for verification
 
-When the operator asks to "populate mock data", "seed sample
-recipes", "fill in placeholder images", or "make the empty state
-look real" — DO NOT edit the rendering component to invent a
-placeholder. The page renders FROM the DB; changing only the
-component leaves you with the same empty rows.
+When the operator asks to "populate mock data" or "seed sample records",
+the source of truth is the **database** — not stub values in service code.
+Insert real-looking rows so the API responses look realistic during testing.
 
 **Do NOT reset reflexively.** Operator-seeded rows live in the
 same tables; `/api/dev/reset` wipes everything. The correct flow
 inspects first and only resets when existing data is structurally
-unfixable (NULL on a field the UI requires, AND no way to fix it
-without re-seeding):
+unfixable (NULL on a required field AND no way to fix it without
+re-seeding):
 
 ```bash
 # 1. SEE what's already there.
 curl -sS http://localhost:8000/api/<resource-list-endpoint>
-# If rows exist with the field the UI needs, do NOT seed — the
-# rendering side is what's wrong (auth wall, route mismatch,
-# component bug). Diagnose that instead.
+# If rows exist and look correct, do NOT seed — the issue may be
+# an auth wall, route mismatch, or missing query predicate. Diagnose
+# that instead.
 
 # 2. Get the organization_id you'd seed INTO if rows are missing
-# or have NULL on the field the UI needs.
+# or have NULL on a required field.
 curl -sS -X POST -H 'Content-Type: application/json' \
   -d '{"email":"agent@dev.local"}' \
   http://localhost:8000/api/dev/login | jq -r '.organization.id'
@@ -571,31 +569,28 @@ curl -sS -X POST -H 'Content-Type: application/json' \
 # can't UPDATE in place (/api/dev/seed is INSERT-only by design).
 # Narrate the destruction out loud BEFORE running so the operator
 # can stop you: "Clearing N existing rows so I can re-seed with
-# photo URLs filled in." NEVER skip this announcement.
+# all fields filled in." NEVER skip this announcement.
 curl -sS -X POST -H 'Content-Type: application/json' \
   -d '{"tables":["recipes"]}' \
   http://localhost:8000/api/dev/reset
 
-# 4. Insert with EVERY column the UI reads, including image URLs.
+# 4. Insert with EVERY column the API returns, including URL fields.
 curl -sS -X POST -H 'Content-Type: application/json' \
   -d '{"raw":[{"table":"recipes","rows":[
     {"organization_id":"<UUID>","title":"...","slug":"...",
      "description":"...","photo_url":"https://images.unsplash.com/...",
-     "photo_width":1200,"photo_height":1600,
      "servings":4,"prep_minutes":30,"cook_minutes":12}
   ]}]}' \
   http://localhost:8000/api/dev/seed
 ```
 
-**Image URL conventions** (use real CDN URLs, not `/placeholder.png`):
+**URL / image field conventions** (use real CDN URLs, not `/placeholder.png`):
 
-- Unsplash: `https://images.unsplash.com/photo-<ID>?w=1200&q=80&auto=format&fit=crop` — direct asset URLs, no rate limit at small scale, food/people/landscape topics search-friendly via `unsplash.com/s/photos/<topic>`.
-- Picsum: `https://picsum.photos/seed/<slug>/1200/900` — deterministic-by-seed, good for "any image will do" cases.
+- Unsplash: `https://images.unsplash.com/photo-<ID>?w=1200&q=80&auto=format&fit=crop`
+- Picsum: `https://picsum.photos/seed/<slug>/1200/900` — deterministic-by-seed.
 - Avatars: `https://i.pravatar.cc/300?u=<email>` — deterministic by user email.
 
 **There is NO PATCH endpoint** — `/api/dev/seed` only does INSERT and `/api/dev/reset` only does TRUNCATE. To "update" existing rows, reset the table first then re-insert with the new column values. This is intentional: the dev surface stays small, and the agent's mental model is "what should the DB look like" rather than "what's the column-level diff".
-
-**Don't invent placeholders in components when the directive says "populate the data".** The user said "populate" because they want the DB rows to have real-looking values; a `<img src={photo_url ?? '/missing.svg'} />` fallback is not the same and feels broken if every row hits the fallback.
 
 ### Production safety
 
