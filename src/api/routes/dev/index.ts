@@ -688,8 +688,8 @@ devRoutes.get("/info", (c) => {
       },
       "POST /api/dev/app-state": {
         purpose:
-          "SPA push endpoint. The dev-panel client (web/src/lib/devpanel/) " +
-          "POSTs the current store snapshot here on every change + 5s heartbeat.",
+          "Client snapshot push endpoint. A frontend (if you add one) can " +
+          "POST its current store snapshot here for the agent's L1 read.",
         body: { snapshot: "ClientSnapshot", markdown: "string" },
       },
       "GET /api/dev/app-state": {
@@ -857,9 +857,8 @@ devRoutes.get("/app-state", (c) => {
   const clientMarkdown = lastClientMarkdown ?? [
     "# Client App State Snapshot",
     "",
-    "_No client snapshot received yet. Either the SPA isn't running, or " +
-    "the dev-panel push pipeline hasn't fired its first heartbeat. See " +
-    "web/src/lib/devpanel/init.ts._",
+    "_No client snapshot received yet. This is a headless API template — " +
+    "a snapshot only appears if a frontend POSTs one to /api/dev/app-state._",
     "",
   ].join("\n");
   const serverMarkdown = formatServerMarkdown(server);

@@ -115,8 +115,8 @@ export const PROVIDERS: OAuthProvider[] = [
 
 /**
  * The subset of providers whose env vars are actually populated at
- * runtime. /auth/config returns this — Login.svelte renders one button
- * per entry.
+ * runtime. GET /auth/config returns this so a client can render one
+ * sign-in button per configured provider.
  */
 export function getConfiguredProviders(): OAuthProvider[] {
   return PROVIDERS.filter((p) => {

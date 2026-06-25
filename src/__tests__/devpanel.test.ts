@@ -1,25 +1,22 @@
 /**
  * DevPanel pipeline tests — server-side surface.
  *
+ * This is a headless API template (no SPA). The dev-activity ring
+ * buffers + GET/POST /api/dev/app-state still exist server-side so the
+ * agent verification pipeline can read the running app's request/error
+ * history; the client-snapshot half of the payload is simply empty when
+ * no frontend is pushing to it.
+ *
  * Coverage:
  *   - dev-activity ring buffer: append, cap, separate request/error
  *     buffers, snapshot returns a copy
- *   - recent-activity middleware: writes a request record on every
- *     handled request; writes an error record on thrown handlers
+ *   - recent-activity middleware registration gated on the dev-routes flag
  *   - GET /api/dev/app-state: returns server context even before any
  *     client snapshot has been pushed (the agent's L1 layer must
- *     work from request 0, not after the SPA has had a chance to
- *     populate the store)
+ *     work from request 0)
  *   - POST /api/dev/app-state: stores the client snapshot for
  *     subsequent GETs
- *   - Production gate: dev routes self-404 when NODE_ENV=production
- *
- * Source-shape lints:
- *   - Every store file in web/src/stores/ uses `defineStore` (the
- *     load-bearing convention that makes the dev panel work)
- *   - `App.svelte` mounts `<DevPanel />`
- *   - `main.ts` calls `initDevPanel()`
- *   - `app.ts` mounts `recentActivityMiddleware` gated on NODE_ENV
+ *   - dev routes register POST and GET /app-state
  */
 
 import { assertEquals, assertExists, assertStringIncludes } from "@std/assert";
@@ -33,6 +30,18 @@ import {
 
 function deno(name: string, fn: () => void | Promise<void>) {
   Deno.test({ name, sanitizeResources: false, sanitizeOps: false, fn });
+}
+
+// Enable the fail-closed dev surface for the in-process dev-route tests.
+// The router gate (devRoutesEnabled / ALCHEMIST_DEV_ROUTES) is evaluated
+// per-request, so setting this before `.fetch()` is sufficient.
+function withDevRoutes<T>(fn: () => Promise<T>): Promise<T> {
+  const prev = Deno.env.get("ALCHEMIST_DEV_ROUTES");
+  Deno.env.set("ALCHEMIST_DEV_ROUTES", "1");
+  return fn().finally(() => {
+    if (prev === undefined) Deno.env.delete("ALCHEMIST_DEV_ROUTES");
+    else Deno.env.set("ALCHEMIST_DEV_ROUTES", prev);
+  });
 }
 
 // ── dev-activity ring buffer ───────────────────────────────────────────────
@@ -111,92 +120,9 @@ deno("ring: getRecentRequests returns a fresh array (caller can't mutate)", () =
   }
 });
 
-// ── Source-shape lints (the load-bearing convention) ──────────────────────
+// ── Source-shape lints ────────────────────────────────────────────────────
 
-deno("source: every web/src/stores/*.svelte.ts uses defineStore", async () => {
-  const dir = new URL("../../web/src/stores/", import.meta.url);
-  const stores: string[] = [];
-  for await (const entry of Deno.readDir(dir)) {
-    if (entry.isFile && entry.name.endsWith(".svelte.ts")) {
-      stores.push(entry.name);
-    }
-  }
-  if (stores.length === 0) {
-    throw new Error("Expected at least one store file in web/src/stores/");
-  }
-  for (const name of stores) {
-    const src = await Deno.readTextFile(new URL(name, dir));
-    if (!src.includes(`from "../lib/devpanel/store.svelte"`)) {
-      throw new Error(
-        `web/src/stores/${name} doesn't import defineStore from ` +
-          `../lib/devpanel/store.svelte — every shared store must go ` +
-          `through defineStore so the dev panel can introspect it. ` +
-          `See web/src/lib/devpanel/store.svelte.ts for the convention.`,
-      );
-    }
-    if (!src.includes("defineStore<")) {
-      throw new Error(
-        `web/src/stores/${name} imports defineStore but doesn't call it. ` +
-          `Did you accidentally leave bare module-level $state in this ` +
-          `file? The DevPanel can only see state declared via defineStore.`,
-      );
-    }
-    // Bare module-level `$state(` outside of a defineStore call would
-    // create state the dev panel can't see. The defineStore helper
-    // uses $state internally — that's fine. Anything else is a smell.
-    const bareStateMatches = src.match(/^let\s+\w+\s*=\s*\$state/gm);
-    if (bareStateMatches && bareStateMatches.length > 0) {
-      throw new Error(
-        `web/src/stores/${name} has bare module-level \`let X = $state(...)\` ` +
-          `(${bareStateMatches.length} occurrence${
-            bareStateMatches.length > 1 ? "s" : ""
-          }). All shared store state must go through defineStore. ` +
-          `Component-local $state inside .svelte components is fine ` +
-          `(that's not what this lint checks).`,
-      );
-    }
-  }
-});
-
-deno("source: web/src/main.ts calls initDevPanel before mounting App", async () => {
-  const src = await Deno.readTextFile(
-    new URL("../../web/src/main.ts", import.meta.url),
-  );
-  if (!src.includes("initDevPanel")) {
-    throw new Error(
-      "web/src/main.ts must call initDevPanel() — without it the dev " +
-        "panel push pipeline never starts and /api/dev/app-state stays " +
-        "empty until the SPA's first manual interaction.",
-    );
-  }
-  // Must be called BEFORE mount(App, ...) — otherwise the first
-  // few renders' state changes don't notify the dev panel.
-  const initIdx = src.indexOf("initDevPanel(");
-  const mountIdx = src.indexOf("mount(App");
-  if (initIdx === -1 || mountIdx === -1 || initIdx > mountIdx) {
-    throw new Error(
-      "web/src/main.ts must call initDevPanel() BEFORE mount(App, ...) — " +
-        "otherwise initial-render state changes are missed by the push " +
-        "pipeline (no debounced fire scheduled before the first store write).",
-    );
-  }
-});
-
-deno("source: web/src/App.svelte mounts <DevPanel />", async () => {
-  const src = await Deno.readTextFile(
-    new URL("../../web/src/App.svelte", import.meta.url),
-  );
-  if (!src.includes("<DevPanel")) {
-    throw new Error(
-      "App.svelte must render <DevPanel /> so the human-side panel UI " +
-        "is available in dev. The component itself short-circuits in " +
-        "production via import.meta.env.PROD; mounting it unconditionally " +
-        "here is correct.",
-    );
-  }
-});
-
-deno("source: app.ts mounts recentActivityMiddleware gated on non-prod", async () => {
+deno("source: app.ts mounts recentActivityMiddleware gated by the dev-routes flag", async () => {
   const src = await Deno.readTextFile(
     new URL("../../app.ts", import.meta.url),
   );
@@ -206,107 +132,14 @@ deno("source: app.ts mounts recentActivityMiddleware gated on non-prod", async (
         "has request/error history to surface.",
     );
   }
-  // Verify the production gate is on the registration (defense-in-depth
-  // even though the dev routes themselves are also production-gated).
-  if (!src.includes('Deno.env.get("NODE_ENV") !== "production"')) {
+  // Verify the registration is gated on the fail-closed dev-routes flag
+  // (devRoutesEnabled / ALCHEMIST_DEV_ROUTES) — matching the gate on the
+  // dev-routes router that EXPOSES this data, so the ring buffer never
+  // accumulates customer-facing request metadata in production.
+  if (!src.includes("devRoutesEnabled()")) {
     throw new Error(
-      "app.ts must gate recentActivityMiddleware on NODE_ENV !== \"production\". " +
-        "The ring buffer is harmless but accumulating customer-facing " +
-        "request metadata in production memory is unnecessary.",
-    );
-  }
-});
-
-deno("source: no $effect-on-mount loops in *.svelte components (live-bug regression guard)", async () => {
-  // Live test caught a pre-existing template bug: components used
-  //   $effect(() => { someStore.fetchSomething(); })
-  // for one-shot mount-time side effects. Synchronously writing to a
-  // $state inside the effect body causes Svelte 5's internal read-for-
-  // comparison to attribute the read to the currently-running effect,
-  // which then re-runs when the value flips back, looping the fetch.
-  // Reproduced: 24K /auth/me requests in 13min before the fix.
-  //
-  // The right tool is `onMount`. This lint scans every component for
-  // the buggy shape: a $effect whose body calls a single store/api
-  // method with no reactive-read guard. Allowed shapes:
-  //   - $effect that EXPLICITLY reads a reactive value at the top:
-  //       $effect(() => { if (authStore.isLoading) return; ... });
-  //   - $effect that RETURNS a cleanup (interval / listener teardown):
-  //       $effect(() => { setInterval(...); return () => clearInterval(...); });
-  //   - $effect with no calls (rare; pure tracker).
-  //
-  // The lint is conservative: any $effect inside a *.svelte file that
-  // imports from `../stores/` or `../lib/api` AND doesn't reference
-  // `onMount` from "svelte" is suspicious unless the effect body
-  // reads a reactive value (heuristic: contains an `if (` referencing
-  // a store field, or returns a teardown).
-  const svelteFiles: string[] = [];
-  async function walk(dir: URL) {
-    for await (const entry of Deno.readDir(dir)) {
-      const sub = new URL(`${entry.name}${entry.isDirectory ? "/" : ""}`, dir);
-      if (entry.isDirectory) await walk(sub);
-      else if (entry.name.endsWith(".svelte")) svelteFiles.push(sub.pathname);
-    }
-  }
-  await walk(new URL("../../web/src/", import.meta.url));
-
-  const offenders: string[] = [];
-  for (const path of svelteFiles) {
-    const src = await Deno.readTextFile(path);
-    // Find every $effect block. Match `$effect(()  =>  { ... })`
-    // non-greedy across newlines. Cheap regex; not a real parser, but
-    // sufficient because every offending shape is `$effect(() => {`.
-    const effects = [...src.matchAll(/\$effect\s*\(\s*\(\s*\)\s*=>\s*\{([\s\S]*?)\}\s*\)\s*;/g)];
-    for (const match of effects) {
-      const body = match[1];
-      // Allowed: body reads reactive state via `if (...)`, returns a
-      // teardown, or is a pure no-op.
-      const hasReactiveGuard = /^\s*if\s*\(/m.test(body);
-      const hasTeardown = /\breturn\s*\(\)\s*=>/m.test(body) ||
-        /\breturn\s+\w+\s*;?\s*$/m.test(body);
-      // Buggy shape: body calls a method on a *Store or api.* and
-      // doesn't fall under either allowance.
-      const callsStoreOrApi = /(?:Store|store)\.\w+\s*\(|api\.\w+\s*\(/m
-        .test(body);
-      if (callsStoreOrApi && !hasReactiveGuard && !hasTeardown) {
-        offenders.push(`${path.split("/web/src/")[1] ?? path}: ${match[0].slice(0, 80)}...`);
-      }
-    }
-  }
-
-  if (offenders.length > 0) {
-    throw new Error(
-      `${offenders.length} $effect-on-mount sites found in *.svelte ` +
-        `files. These call a store/api method without a reactive-read ` +
-        `guard and without a cleanup return — the canonical loop shape ` +
-        `that fired 24K /auth/me requests in 13min during live testing. ` +
-        `Use onMount instead. See CLAUDE.md → "$effect on mount is a ` +
-        `trap; use onMount". Offenders:\n  - ${offenders.join("\n  - ")}`,
-    );
-  }
-});
-
-deno("source: push pipeline doesn't dedup on shallow signature (live-bug regression guard)", async () => {
-  // Earlier the push pipeline computed a "shallow signature" of
-  // {route, storeOrder, viewport} to skip pushes that looked
-  // unchanged. That signature excluded actual store CONTENTS — so
-  // when an auth flag flipped or a cart item was added, the route
-  // and storeOrder didn't change, the signature matched, and the
-  // push silently dropped. Smoke test against the live SPA caught it
-  // (see commit message). This test pins the no-dedup invariant so
-  // the optimization can't sneak back without explicit consideration.
-  const src = await Deno.readTextFile(
-    new URL("../../web/src/lib/devpanel/push.svelte.ts", import.meta.url),
-  );
-  if (src.includes("lastPushedHash")) {
-    throw new Error(
-      "push.svelte.ts brings back lastPushedHash dedup — that signature " +
-        "necessarily either (a) excludes store contents (silently drops " +
-        "store-content changes — the load-bearing case), or (b) " +
-        "re-stringifies every store on every push to compare strings " +
-        "(wasteful — the 1s debounce + 5s heartbeat already cap " +
-        "bandwidth). If you have a third option, document why this " +
-        "regression test should be deleted before doing it.",
+      "app.ts must gate recentActivityMiddleware on devRoutesEnabled() so " +
+        "the ring buffer stays off unless the dev surface is explicitly enabled.",
     );
   }
 });
@@ -331,96 +164,81 @@ deno("source: dev-routes register POST and GET /app-state", async () => {
 
 // ── End-to-end through devRoutes (in-process) ──────────────────────────────
 
-deno("e2e: GET /api/dev/app-state returns server context even with no client push", async () => {
-  __resetDevActivityForTests();
-  // Make sure we look like dev (the dev routes' top-level guard reads
-  // NODE_ENV at module-import time, but our process-level value here
-  // is dev because no env was set, so re-imports inherit it).
-  const previousEnv = Deno.env.get("NODE_ENV");
-  if (previousEnv === "production") Deno.env.delete("NODE_ENV");
+deno("e2e: GET /api/dev/app-state returns server context even with no client push", () =>
+  withDevRoutes(async () => {
+    __resetDevActivityForTests();
 
-  // Late-import so the route module's `IS_PROD` constant captures
-  // the right env value.
-  const { devRoutes } = await import("@/api/routes/dev/index.ts");
+    // Late-import so the route module is evaluated with the dev flag on.
+    const { devRoutes } = await import("@/api/routes/dev/index.ts");
 
-  const res = await devRoutes.fetch(
-    new Request("http://localhost/app-state"),
-  );
-  assertEquals(res.status, 200);
-  const body = await res.json() as Record<string, unknown>;
+    const res = await devRoutes.fetch(
+      new Request("http://localhost/app-state"),
+    );
+    assertEquals(res.status, 200);
+    const body = await res.json() as Record<string, unknown>;
 
-  // No client push yet — `client` is null.
-  assertEquals(body.client, null);
+    // No client push yet — `client` is null.
+    assertEquals(body.client, null);
 
-  // Server context is always present.
-  assertExists(body.server);
-  const server = body.server as Record<string, unknown>;
-  assertExists(server.timestamp);
-  assertExists(server.env);
-  assertExists(server.recentRequests);
-  assertExists(server.recentErrors);
+    // Server context is always present.
+    assertExists(body.server);
+    const server = body.server as Record<string, unknown>;
+    assertExists(server.timestamp);
+    assertExists(server.env);
+    assertExists(server.recentRequests);
+    assertExists(server.recentErrors);
 
-  // Markdown is rendered with the "no client snapshot yet" copy.
-  assertStringIncludes(body.markdown as string, "No client snapshot received yet");
+    // Markdown is rendered with the "no client snapshot yet" copy.
+    assertStringIncludes(body.markdown as string, "No client snapshot received yet");
+  }));
 
-  // Restore env.
-  if (previousEnv !== undefined) Deno.env.set("NODE_ENV", previousEnv);
-});
+deno("e2e: POST /api/dev/app-state persists the client snapshot for subsequent GETs", () =>
+  withDevRoutes(async () => {
+    __resetDevActivityForTests();
 
-deno("e2e: POST /api/dev/app-state persists the client snapshot for subsequent GETs", async () => {
-  __resetDevActivityForTests();
-  const previousEnv = Deno.env.get("NODE_ENV");
-  if (previousEnv === "production") Deno.env.delete("NODE_ENV");
+    const { devRoutes } = await import("@/api/routes/dev/index.ts");
 
-  const { devRoutes } = await import("@/api/routes/dev/index.ts");
+    const snapshot = {
+      timestamp: "2026-05-05T22:00:00.000Z",
+      route: { hash: "#/dashboard", path: "/dashboard", params: {} },
+      viewport: { width: 1280, height: 720 },
+      stores: { auth: { user: null, isLoading: false, error: null } },
+      recentErrors: [],
+      storeOrder: ["auth"],
+    };
+    const markdown = "# Client App State Snapshot\n\nfake markdown\n";
 
-  const snapshot = {
-    timestamp: "2026-05-05T22:00:00.000Z",
-    route: { hash: "#/dashboard", path: "/dashboard", params: {} },
-    viewport: { width: 1280, height: 720 },
-    stores: { auth: { user: null, isLoading: false, error: null } },
-    recentErrors: [],
-    storeOrder: ["auth"],
-  };
-  const markdown = "# Client App State Snapshot\n\nfake markdown\n";
+    const post = await devRoutes.fetch(
+      new Request("http://localhost/app-state", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ snapshot, markdown }),
+      }),
+    );
+    assertEquals(post.status, 200);
 
-  const post = await devRoutes.fetch(
-    new Request("http://localhost/app-state", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ snapshot, markdown }),
-    }),
-  );
-  assertEquals(post.status, 200);
+    const get = await devRoutes.fetch(
+      new Request("http://localhost/app-state"),
+    );
+    const body = await get.json() as Record<string, unknown>;
+    const client = body.client as Record<string, unknown>;
+    assertExists(client);
+    assertEquals(client.timestamp, snapshot.timestamp);
+    assertStringIncludes(body.markdown as string, "fake markdown");
+  }));
 
-  const get = await devRoutes.fetch(
-    new Request("http://localhost/app-state"),
-  );
-  const body = await get.json() as Record<string, unknown>;
-  const client = body.client as Record<string, unknown>;
-  assertExists(client);
-  assertEquals(client.timestamp, snapshot.timestamp);
-  assertStringIncludes(body.markdown as string, "fake markdown");
+deno("e2e: GET /api/dev/app-state?format=markdown returns text/markdown", () =>
+  withDevRoutes(async () => {
+    const { devRoutes } = await import("@/api/routes/dev/index.ts");
 
-  if (previousEnv !== undefined) Deno.env.set("NODE_ENV", previousEnv);
-});
-
-deno("e2e: GET /api/dev/app-state?format=markdown returns text/markdown", async () => {
-  const previousEnv = Deno.env.get("NODE_ENV");
-  if (previousEnv === "production") Deno.env.delete("NODE_ENV");
-
-  const { devRoutes } = await import("@/api/routes/dev/index.ts");
-
-  const res = await devRoutes.fetch(
-    new Request("http://localhost/app-state?format=markdown"),
-  );
-  assertEquals(res.status, 200);
-  assertStringIncludes(
-    res.headers.get("content-type") ?? "",
-    "text/markdown",
-  );
-  const text = await res.text();
-  assertStringIncludes(text, "Server Context");
-
-  if (previousEnv !== undefined) Deno.env.set("NODE_ENV", previousEnv);
-});
+    const res = await devRoutes.fetch(
+      new Request("http://localhost/app-state?format=markdown"),
+    );
+    assertEquals(res.status, 200);
+    assertStringIncludes(
+      res.headers.get("content-type") ?? "",
+      "text/markdown",
+    );
+    const text = await res.text();
+    assertStringIncludes(text, "Server Context");
+  }));

@@ -1,9 +1,9 @@
 /**
  * Role hierarchy + permission helpers for team management.
  *
- * Single source of truth — both the API middleware
- * (`api/middleware/permissions.ts`) AND the client-side store/UI
- * (`web/src/lib/permissions.ts` mirror) read from this same hierarchy.
+ * Single source of truth for the API middleware
+ * (`api/middleware/permissions.ts`). Any client you build on top of
+ * this API should mirror this hierarchy rather than re-deriving it.
  *
  * Roles
  *

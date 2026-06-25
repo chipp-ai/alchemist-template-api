@@ -488,6 +488,8 @@ function generateInviteToken(): string {
 
 function buildAcceptUrl(token: string): string {
   const base = Deno.env.get("APP_URL") ?? "http://localhost:8000";
-  // Hash route — matches web/src/routes.ts.
-  return `${base}/#/invite/${token}`;
+  // Points at the invite-acceptance surface a client would render for
+  // this token. This headless template has no bundled frontend, so adjust
+  // the path to wherever your client handles `/api/invite/:token`.
+  return `${base}/invite/${token}`;
 }

@@ -8,25 +8,29 @@
 
 @.claude/local-dev.md
 
-All references to `__VITE_PORT__` and `__API_PORT__` in docs mean **your** Vite and API ports from the file above.
+All references to `__API_PORT__` in docs mean **your** API port from the file above.
 
 ## Quick Start
 
+This is a **headless API template** — a Hono API with no bundled frontend.
+
 ```bash
-./scripts/setup.sh                                          # First time only
-./scripts/dev.sh --api-port __API_PORT__ --port __VITE_PORT__  # Start dev stack
+./scripts/setup.sh                          # First time only
+./scripts/dev.sh --api-port __API_PORT__    # Start the API dev stack
 ```
 
-**Browser:** Always use `http://localhost:__VITE_PORT__` (Vite), NOT the API port.
+Hit the API directly with `curl` (or any HTTP client):
 
-**HMR is disabled.** Multiple agents build concurrently on the same repo. Frontend changes require a **hard reload** in the browser (Cmd+Shift+R). Do not wait for HMR -- it will not pick up changes.
+```bash
+curl http://localhost:__API_PORT__/health      # → { "status": ... }
+curl http://localhost:__API_PORT__/api/hello    # → { "data": { "message": ... } }
+```
 
-**Dev login (local browser testing):** there is no SMTP / inbox harness in dev, so the email-OTP code never reaches an inbox — sign-in via the OTP form will always block. Two well-lit escape hatches:
+**Dev login (testing auth-gated routes):** there is no SMTP / inbox harness in dev, so the email-OTP code never reaches an inbox. Use the dev-login escape hatch instead:
 
-- **In the browser**, the Login page renders a "Dev login as ..." button below the OTP form (visible only when `import.meta.env.DEV`). It POSTs to `/api/dev/login`, sets a real session cookie, and redirects in. This is the path for human / interactive testing.
-- **From an agent or terminal**, `curl -X POST -H 'Content-Type: application/json' -d '{"email":"agent@dev.local"}' http://localhost:__API_PORT__/api/dev/login -c /tmp/jar.txt` issues the same session. Re-use the cookie jar with `-b /tmp/jar.txt` on subsequent requests.
+- `curl -X POST -H 'Content-Type: application/json' -d '{"email":"agent@dev.local"}' http://localhost:__API_PORT__/api/dev/login -c /tmp/jar.txt` issues a real session. Re-use the cookie jar with `-b /tmp/jar.txt` on subsequent requests.
 
-The `/api/dev/*` routes 404 when `NODE_ENV=production`, and the Login page button is stripped from production SPA builds — both surfaces are local-only by construction. See "Dev affordances" further down for the full route catalog (seed / reset / introspect).
+The `/api/dev/*` routes require the `ALCHEMIST_DEV_ROUTES` flag (set by `deno task dev`) and self-404 in production. See "Dev affordances" further down for the full route catalog (seed / reset / introspect).
 
 ## Architecture
 
@@ -47,28 +51,22 @@ src/                    # Deno + Hono API server
     services/           # Service unit tests
     helpers.ts          # Test utilities (createIsolatedUser, etc.)
 
-web/                    # Svelte 5 SPA
-  src/
-    routes/             # Page components (hash-based routing)
-    stores/             # Svelte stores (state management)
-    lib/
-      api.ts            # Typed fetch wrapper with 401 handling
-
 db/
   migrations/           # SQL migration files (YYYYMMDDHHMMSS_description.sql)
   migrate.ts            # Migration runner
 
 scripts/
-  dev.sh                # Start full dev stack
+  dev.sh                # Start the API dev stack
   setup.sh              # First-time project setup
 
 .scratch/               # Ephemeral files (gitignored except .gitkeep)
-  logs/                 # Dev server logs (server.log, vite.log)
+  logs/                 # Dev server logs (server.log)
 ```
+
+This is a **headless API template**: a Hono API with no bundled frontend. Build any client (web, mobile, CLI) against the API surface, or consume it directly.
 
 **Stack:**
 - **API:** Deno + Hono
-- **Frontend:** Svelte 5 SPA with hash-based routing (`svelte-spa-router`)
 - **Database:** PostgreSQL via Kysely (CamelCasePlugin)
 - **Cache/Sessions:** Redis
 - **Edge Proxy:** Cloudflare Worker (when deployed)
@@ -94,8 +92,7 @@ These guide all code review and implementation decisions:
 - **Use `deno task test:fast`** for quick iteration (~1min). To run a specific test file: `deno test --env --no-check --allow-all <file>`.
 - **Tests that create DB resources must use `createIsolatedUser()`** -- never the shared test user. Parallel tests can delete each other's data.
 - **NEVER use `--no-verify` or `--no-gpg-sign`** on any git command. If hooks fail, fix the underlying issue.
-- **Every interactive element gets `data-testid`** following `{area}-{component}-{element}` convention (e.g., `data-testid="settings-form-input-name"`).
-- **ALWAYS use `./scripts/dev.sh --api-port __API_PORT__ --port __VITE_PORT__`** -- ports are required (no defaults), logs go to `.scratch/logs/`.
+- **ALWAYS use `./scripts/dev.sh --api-port __API_PORT__`** -- the API port is required (no default), logs go to `.scratch/logs/`.
 
 ## Convention spokes — `.claude/rules/`
 
@@ -118,20 +115,19 @@ exposes them via the `load_skill` tool). Add a new spoke by dropping a
 
 ## Observability stream — `.scratch/logs/observability.jsonl`
 
-Every server log statement, HTTP request, server error, AND every browser-side breadcrumb (console.*, errors, fetch/XHR, clicks, route changes, LCP/CLS/INP) converges in **time order** into a single JSONL file at `.scratch/logs/observability.jsonl`. This is the canonical "what happened during this test session" stream — read it after a user has poked at the app to understand exactly what they did, what fired, and what failed.
+Every server log statement, HTTP request, and server error converges in **time order** into a single JSONL file at `.scratch/logs/observability.jsonl`. This is the canonical "what happened during this test session" stream — read it to understand exactly what fired and what failed. (This is a headless API: there is no bundled client, but the `POST /api/_observability/breadcrumb` collector still accepts `source: "client"` breadcrumbs if you build a frontend that ships them.)
 
-Each line is `{ts, sid, source: "client"|"server", kind, data}`. Stable `kind` slugs (do NOT mutate; analytics product depends on them): `server.log.{debug,info,warn,error}`, `server.http`, `server.error`, `client.console.{log,info,warn,error,debug}`, `client.error`, `client.promise`, `client.fetch`, `client.click`, `client.click.background`, `client.route`, `client.perf.{lcp,cls,inp}`, `client.session`.
+Each line is `{ts, sid, source: "client"|"server", kind, data}`. Stable `kind` slugs (do NOT mutate; analytics product depends on them): `server.log.{debug,info,warn,error}`, `server.http`, `server.error`, plus the `client.*` slugs an external client may POST.
 
 Implementation lives in:
 - `src/observability/jsonl-writer.ts` — append-only writer with 10MB rotation
 - `src/observability/envelope.ts` — `recordServerEvent` / `recordClientEvents`
 - `src/api/routes/observability/index.ts` — `POST /api/_observability/breadcrumb` collector
-- `web/src/lib/observability/breadcrumbs.ts` — client-side hooks (installed from `web/src/main.ts`)
 - Hooked into `src/lib/logger.ts` (every emit) and `src/lib/dev-activity.ts` (every recorded request + error)
 
 Dev-only — the entire pipeline no-ops when `NODE_ENV === "production"`. The analytics product will replace the collector with a remote ingest at that boundary when it ships.
 
-**When debugging a user-reported issue, tail this file first** — `tail -n 200 .scratch/logs/observability.jsonl | jq .` gives the most recent slice of what happened in their session, both client and server, in time order.
+**When debugging a user-reported issue, tail this file first** — `tail -n 200 .scratch/logs/observability.jsonl | jq .` gives the most recent slice of what happened in their session.
 
 ## API Conventions
 
@@ -211,268 +207,29 @@ src/__tests__/
 > pass the `Error` as the 3rd arg; throw `AppError` subclasses and let the
 > global handler format them.
 
-## Frontend Conventions
-
-### Svelte 5 — runes only, NOT Svelte 4
-
-`web/package.json` pins `"svelte": "^5.0.0"`, which compiles in runes mode and **rejects Svelte 4 syntax outright**. Most LLM training data is Svelte 4 — consciously override your defaults when writing or editing `*.svelte` files.
-
-| Concept | Svelte 5 (use this) | Svelte 4 (do NOT use) |
-|---|---|---|
-| Props | `let { foo, bar }: { foo: string; bar?: number } = $props();` | `export let foo: string;` |
-| Local state | `let count = $state(0);` | `let count = 0;` (becomes non-reactive in runes mode) |
-| Derived | `let doubled = $derived(count * 2);` | `$: doubled = count * 2;` |
-| Side effect | `$effect(() => { console.log(count); });` | `$: console.log(count);` |
-| Children/slots | `{@render children()}` with `let { children } = $props();` | `<slot />` |
-
-Unchanged from v4: `bind:value` two-way binding, `$store` access for stores.
-
-**Build gate before push.** Any change touching `web/src/**/*.svelte` MUST be followed by:
-
-```bash
-cd web && npm install --silent && npm run build
-```
-
-The build MUST succeed and produce `web/dist/index.html`. The runtime Dockerfile's `web-builder` stage runs the same command — failures here mean the deploy will fail AFTER the push lands. If the build errors with `Cannot use 'export let' in runes mode` or similar, fix the syntax — **do NOT downgrade Svelte to v4 in `package.json`**, that breaks the platform contract.
-
-### `$effect` on mount is a trap — use `onMount` for one-shot side effects
-
-If a side effect should run **once when the component mounts**, use
-`onMount` from `svelte`, NOT `$effect`. The bug this avoids:
-
-```svelte
-<script>
-  // ❌ BAD — runaway loop
-  $effect(() => {
-    authStore.checkAuth();   // synchronously writes state.isLoading = true
-  });
-</script>
-```
-
-Why this loops: Svelte 5's `$effect` tracks reactive reads for re-run.
-When `checkAuth()` synchronously writes `state.isLoading = true`, Svelte
-internally reads the previous value to decide whether to invalidate
-dependents — and that internal read gets attributed to the currently-
-running `$effect` as a tracked dep. When the `finally` block flips
-`state.isLoading = false`, the effect re-runs, calls `checkAuth` again,
-which writes `isLoading = true`, which re-invalidates the effect…
-**unbounded `/auth/me` loop.** (Reproduced live: 24K requests in 13min
-before the fix.)
-
-```svelte
-<script>
-  import { onMount } from "svelte";
-
-  // ✅ GOOD — fires exactly once after mount, no reactive tracking
-  onMount(() => {
-    authStore.checkAuth();
-  });
-</script>
-```
-
-**Rule:** if your `$effect` body would read no reactive value (it just
-calls a fetcher / store action / API method as a one-shot), it's the
-wrong tool. Reach for `onMount`. Reserve `$effect` for code that
-*intentionally* re-runs when reactive state changes (e.g.
-`$effect(() => { if (authStore.isLoading) return; redirectIfNeeded(); })`
-in App.svelte, where reading `isLoading` is the whole point).
-
-The same trap applies to async work that resolves later (e.g.
-`api.get(...).then(data => state.foo = data)` inside an effect): the
-later `.then()` write fires after the tracking phase and *can* be safe,
-but if the synchronous portion of the effect writes ANY reactive value,
-the loop is back. Default to `onMount` for fetchers; reach for `$effect`
-only when the reactivity is intentional.
-
-### Routing
-
-Hash-based routing via `svelte-spa-router`. Routes defined in `web/src/routes/`.
-
-```typescript
-import { push, replace } from "svelte-spa-router";
-
-// Navigate forward
-push("/dashboard");
-
-// Replace current entry (use for error redirects to avoid back-button loops)
-replace("/apps");
-```
-
-**SPA error redirects: use `replace()`, not `push()`.** When a page load fails (403, 404, catch block) and you redirect away, `push()` creates a back-button loop.
-
-### Modals, dialogs, and overlays — use `<Modal>`, never hand-roll
-
-**There is a design-system modal. Use it. Do not write a `.modal-backdrop` +
-`position: fixed` block in a route.** The primitive is `web/src/components/Modal.svelte`,
-backed by two actions: `web/src/lib/portal.ts` and `web/src/lib/modal.ts`.
-
-```svelte
-<script>
-  import Modal from "../components/Modal.svelte";
-  let open = $state(false);
-</script>
-
-<button onclick={() => (open = true)}>New quote</button>
-
-<Modal {open} title="New quote" onClose={() => (open = false)} size="md">
-  <p>Body content.</p>
-  {#snippet footer()}
-    <button class="btn btn-secondary" onclick={() => (open = false)}>Cancel</button>
-    <button class="btn btn-primary" onclick={save}>Save</button>
-  {/snippet}
-</Modal>
-```
-
-`<Modal>` gives you, for free: portal-out to `#overlay-root`, dimmed backdrop,
-backdrop-click + ESC + close-button dismissal, body scroll-lock (ref-counted so
-stacked overlays behave), and focus capture/restore. Props: `open`, `title?`,
-`onClose`, `size?` (`sm`/`md`/`lg`), `closeOnBackdrop?`, plus a `children` body
-and an optional `footer` snippet.
-
-**Why hand-rolling breaks (the containing-block trap):** every route renders
-inside `.app-main { overflow-y: auto }`. The instant any ancestor gains a
-`transform`, `filter`, `will-change`, or a route-entry animation with a
-`transform` keyframe, that ancestor becomes the *containing block* for
-`position: fixed` descendants. A `fixed; inset: 0` backdrop then resolves
-against that ancestor instead of the viewport, so the modal renders clipped
-into the content column (off-center, jammed under the header) even though the
-CSS looks correct. The bug is invisible in code and only appears once rendered.
-`<Modal>` sidesteps it by portalling the node to `#overlay-root` (a `<body>`
-child, sibling of `#app`), which always resolves against the viewport.
-
-**Overlay z-index register** (keep overlays consistent and correctly stacked):
-`<Modal>` backdrop = `1000`; the security-critical session-timeout overlay =
-`9999` (must always win); the dev panel = `999999`. A new overlay type slots
-between these, it does not invent a higher number than the session-timeout
-warning.
-
-`SessionTimeoutWarning.svelte` is deliberately NOT built on `<Modal>` — it is
-non-dismissable (no backdrop click, no ESC) by security design. That is the one
-sanctioned exception; everything else uses `<Modal>`.
-
-### API Calls
-
-Use the typed client from `web/src/lib/api.ts`:
-
-```typescript
-import { api } from "$lib/api";
-
-const result = await api.get<{ data: Item[] }>("/items");
-const items = result.data;
-```
-
-The client automatically:
-- Prefixes `/api` to paths
-- Includes credentials
-- Redirects to login on 401
-- Parses JSON responses
-
-### Hard Reload Required
-
-HMR is disabled. After any frontend change, hard reload: **Cmd+Shift+R** (Mac) or **Ctrl+Shift+R** (Windows/Linux).
-
-### Roles and team management
+## Roles and team management
 
 > **The full role hierarchy, capability set, `can()`/`canManage()` helpers,
 > invite flow, and soft-disconnect semantics live in `.claude/rules/auth.md`**
-> (auto-loads on `src/auth/**`, `src/api/middleware/**`, `src/lib/roles.ts`,
-> `web/src/lib/permissions.ts`). The essentials: 4 roles
-> (owner/admin/editor/viewer), gate routes with `requireCapability(...)`, use
-> `can(role, cap)` (never compare role strings), and member removal is a
-> SOFT-DISCONNECT (`organization_id = NULL`), never a hard delete.
+> (auto-loads on `src/auth/**`, `src/api/middleware/**`, `src/lib/roles.ts`).
+> The essentials: 4 roles (owner/admin/editor/viewer), gate routes with
+> `requireCapability(...)`, use `can(role, cap)` (never compare role strings),
+> and member removal is a SOFT-DISCONNECT (`organization_id = NULL`), never a
+> hard delete.
 
-### Stores and the DevPanel — `defineStore` is mandatory for shared state
+`src/lib/roles.ts` is the single source of truth for the hierarchy. This is a
+headless API template (no bundled client) — any frontend you build on top of
+the API should mirror that hierarchy rather than re-deriving it.
 
-Every shared client-side store MUST be declared via `defineStore` from
-`web/src/lib/devpanel/store.svelte.ts`. This is the load-bearing
-convention that lets the DevPanel (visible in dev) AND the agent
-verification pipeline (`GET /api/dev/app-state`) introspect every
-piece of shared state in the running app, without knowing what stores
-any given customer's code happens to have built.
+## Agent app-state surface — `/api/dev/app-state`
 
-```typescript
-// web/src/stores/cart.svelte.ts
-import { defineStore } from "../lib/devpanel/store.svelte";
-
-interface CartState {
-  items: Array<{ id: string; qty: number }>;
-  isLoading: boolean;
-  error: string | null;
-}
-
-const state = defineStore<CartState>("cart", {
-  items: [],
-  isLoading: false,
-  error: null,
-});
-
-export async function addItem(id: string) {
-  // Always assign at the TOP LEVEL — replace the array, don't push() into it.
-  state.items = [...state.items, { id, qty: 1 }];
-}
-
-export const cartStore = {
-  get items() { return state.items; },
-  get isLoading() { return state.isLoading; },
-  get error() { return state.error; },
-  get count() { return state.items.length; },
-  addItem,
-};
-```
-
-**Then add the import to `web/src/main.ts`** in the eager-load block:
-
-```typescript
-// web/src/main.ts
-import "./stores/auth.svelte";
-import "./stores/organization.svelte";
-import "./stores/cart.svelte";  // ← add new stores here
-```
-
-**Update conventions (the rule):**
-
-- Always update via TOP-LEVEL property assignment: `state.items = [...]`,
-  `state.user = newUser`. The Proxy notifies the DevPanel push pipeline
-  on top-level writes; nested mutations (`state.items.push(x)`,
-  `state.user.name = "X"`) work for component reactivity but are
-  delayed in the DevPanel by up to 5s (heartbeat) instead of being
-  visible immediately.
-- For arrays / Maps / Sets: replace the whole reference, don't mutate
-  in place.
-- The store name (first arg to `defineStore`) is the user-visible
-  identifier in the DevPanel — use snake_case singular nouns
-  (`auth`, `cart`, `editor`, `chat`).
-
-**What NOT to do:**
-
-```typescript
-// ❌ BAD — bare module-level $state. The DevPanel can't see this.
-let count = $state(0);
-let user = $state<User | null>(null);
-
-// ❌ BAD — class instances. Not snapshot-safe (JSON.stringify drops them).
-const state = defineStore("foo", new SomeClass());
-```
-
-Component-local `$state` inside `*.svelte` components is fine — that's
-component scratch state, not shared store state, and the DevPanel
-doesn't try to introspect it.
-
-**Why this matters: the agent's L1 verification check.** Before
-driving the browser to verify a change, the verification subagent
-runs `curl http://localhost:$PORT/api/dev/app-state` to read the
-running app's full state. That endpoint returns every `defineStore`-
-registered store, the current route, viewport, recent client errors,
-recent server requests, and recent server errors — all in one
-structured payload. If you create state via bare `$state` for shared
-data, the agent's pre-browser check is incomplete and verification
-gets harder.
-
-**The DevPanel UI** (floating 🛠 button in the bottom-right when
-`import.meta.env.DEV`) shows the same data live during human
-debugging. Implementation: `web/src/components/DevPanel.svelte`,
-mounted in `App.svelte`. Production builds short-circuit via
-`import.meta.env.PROD` — the panel never renders for end users.
+The agent verification pipeline reads the running app's state via
+`GET /api/dev/app-state` (returns recent HTTP requests, recent server errors,
+and an env summary; the `client` half stays `null` until a frontend POSTs a
+snapshot). The dev-activity ring buffers that back it are populated by
+`recentActivityMiddleware`, gated behind the fail-closed `devRoutesEnabled()`
+flag (`ALCHEMIST_DEV_ROUTES`, set by `deno task dev`). See "Dev affordances"
+below for the full `/api/dev/*` route catalog.
 
 ## Brand identity — `src/config/brand.ts` is the only source of truth
 
@@ -509,51 +266,11 @@ codename.
 Surfaces wired through `BRAND` today:
 - `src/services/email.ts` — every transactional email subject,
   body, and `From:` header.
-- `web/index.html` — title is the placeholder `Loading…`;
-  `web/public/brand-loader.js` overrides `document.title` with
-  `brand.productName` from `/brand.json` once the SPA boots.
 
 When adding a new surface (OG meta, push notification copy,
 exported PDFs), reach for `BRAND.*` first. If you find yourself
 typing the literal "Alchemist" anywhere in this repo's customer-
 facing code, stop — that's the bug this module exists to prevent.
-
-## Typography — Google Fonts is the only webfont source
-
-All font usage flows through three semantic tokens in `web/src/app.css`:
-
-```css
---font-heading  /* h1-h6 and any "this should feel like a heading" surface */
---font-sans     /* body + UI (buttons, labels, paragraph text) */
---font-mono     /* code, kbd, samp, pre, tabular numerics */
-```
-
-Components **NEVER** hardcode a `font-family` value. They reference one of the three tokens. That contract is the entire point: changing the product's typography is supposed to be a one-token edit, not a find-and-replace across every Svelte file. If you find yourself typing `font-family: "Inter"` (or any literal family name) anywhere in `web/src/`, stop — use the token.
-
-### Adding or changing a font
-
-Two files, always in lockstep:
-
-1. **`web/index.html`** — update the `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?...">`. Include every weight + italic you'll actually use; don't load 9 weights "just in case" (each weight is a separate font file).
-2. **`web/src/app.css`** — update the `--font-heading` / `--font-sans` / `--font-mono` token(s) to put the new family at the front of the stack. Keep the web-safe fallbacks after — they're what renders during the `display=swap` window (and forever for users behind webfont blockers).
-
-**Google Fonts is the only webfont source.** No Adobe Fonts, no self-hosted `@font-face`, no Typekit. Reasons:
-
-- One CDN, well-cached across the open web (visitors land on your app with the font already in their browser cache from another site).
-- `preconnect` + `display=swap` are a known-good loading pattern; we don't have to rediscover it per app.
-- Lets the local-dev agent's `present_choices` swatch pull from a single curated catalog instead of guessing at family availability.
-
-### When the user asks for a "different vibe"
-
-Don't pick fonts blind. The local-dev agent has a `present_choices` tool (in the orchestrator's tool palette) that opens a swatch of 3-4 visual options with sample text rendered in each candidate. Use it for any aesthetic-direction request: "make it feel more rustic", "modernize the typography", "give it a magazine feel", etc. The user picks; the orchestrator reads the chosen option's `spec` field and applies the two-file change above.
-
-Use it for: `font`, `palette`, `layout`, `copy` — anything a designer would present as a swatch rather than guess at.
-
-**Don't** use it for: bug fixes, specific values the user gave you ("use Inter"), or anything with a clearly-right answer. Over-using `present_choices` is annoying.
-
-### The default pairing
-
-The template ships with **Inter** (everything) + **JetBrains Mono** (code). Inter is the deliberate vibe-neutral default — it works for any product category, doesn't lean visual-design-y, and pairs with anything you'd swap in later. Don't change the default in this repo; let customer apps drift on top.
 
 ## HIPAA mode — env-var-gated, no schema changes
 
@@ -567,15 +284,14 @@ When set:
 - Session JWTs expire after **4 hours** instead of 30 days (`src/utils/session-duration.ts`).
 - The session cookie's `Max-Age` matches the JWT's `exp`.
 - `/auth/me` returns `hipaaEnabled: true` and `sessionDurationMs: 14400000`.
-- The SPA arms `sessionTimeoutStore` (`web/src/stores/sessionTimeout.svelte.ts`): activity tracking on `mousedown / keydown / scroll / touchstart / click` (throttled 1/sec), server-touch via `POST /auth/touch` (throttled 1/5 min), warning modal at TTL−5min, force-logout at TTL.
-- Multiple tabs sync via `BroadcastChannel("alchemist-session-activity")` so activity in one tab resets timers in others.
+- A client is expected to enforce idle timeout: warn near TTL and refresh the session via `POST /auth/touch` on activity.
 
 When unset/false:
-- 30-day default sessions, no activity tracking, no warning modal. The `sessionTimeoutStore` stays inert (`active: false`).
+- 30-day default sessions, no idle-timeout expectation.
 
 There is **no per-user / per-org HIPAA toggle inside this template**. The whole deployed app is HIPAA-bound or it isn't — that's a project-scope decision the alchemist platform records and propagates via the env var. Don't add a `hipaa_enabled` column on `organizations`; the platform's onboarding flow + customer-pod env is the only source of truth.
 
-The `POST /auth/touch` endpoint re-issues a JWT with a fresh `exp` claim and resets the cookie. It calls `requireAuth`, so a session that already lapsed gets 401 → SPA force-logout. The store throttles outgoing `/touch` calls to once per 5 minutes regardless of how active the user is.
+The `POST /auth/touch` endpoint re-issues a JWT with a fresh `exp` claim and resets the cookie. It calls `requireAuth`, so a session that already lapsed gets 401 (a client should treat that as force-logout).
 
 ## Git Workflow
 
@@ -717,9 +433,8 @@ Before reporting any implementation as complete:
 
 1. **Type checks:** `deno task check` passes
 2. **Tests written and passing:** `deno task test:fast 2>&1 | tee .scratch/test-output.txt`
-3. **API tested** (for backend changes): write a scratch test in `.scratch/` and run it
-4. **Browser verified** (for UI changes): hard reload and check the actual rendered result
-5. **No errors** in server logs (`.scratch/logs/server.log`) or browser console
+3. **API tested:** hit the endpoint with `curl` (use the dev-login cookie jar for auth-gated routes), or write a scratch test in `.scratch/` and run it
+4. **No errors** in server logs (`.scratch/logs/server.log`)
 
 **If ANY check fails: fix, re-run, proceed only when green.**
 
@@ -767,7 +482,7 @@ mcp__browser-devtools__browser_take_screenshot
 mcp__browser-devtools__browser_execute_js
 ```
 
-Use these when the previous tiers can't answer your question — you need to verify visual layout, click through a flow, or run JS in the page context (e.g. open a WebSocket from the SPA's origin to verify the proxy + auth path).
+This is a headless API template with no bundled frontend, so the browser tier is rarely needed — prefer `curl` against the API. Reach for the browser tools only if you build a client and need to verify it (visual layout, click through a flow, or run JS in the page context).
 
 ### Decision rule
 
@@ -825,37 +540,7 @@ curl -sS -b /tmp/jar.txt http://localhost:8000/api/auth/me
 # → { user: { id, email, name }, organization: {...} }
 ```
 
-### Recipe — verify the same flow in the headless browser
-
-The dev login sets a real `session_id` cookie that's identical to
-what `/verify-otp` would set, so once you've POSTed to
-`/api/dev/login` from the page (e.g. via `browser_evaluate`), the SPA
-behaves as if the user is logged in.
-
-```ts
-// Browser ALWAYS targets the Vite port (__VITE_PORT__), never the API
-// port. Vite serves the SPA shell + proxies /api → :__API_PORT__, so
-// the relative `/api/dev/login` fetch below reaches the API correctly.
-browser_navigate({ url: "http://localhost:__VITE_PORT__/" })
-
-// Bypass OTP — set the session via dev-login from the page itself.
-browser_evaluate({
-  expression: `(async () => {
-    const r = await fetch('/api/dev/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email: 'agent@dev.local' }),
-    });
-    return r.status;
-  })()`
-})
-
-browser_navigate({ url: "http://localhost:__VITE_PORT__/dashboard" })  // now authed
-browser_screenshot()  // capture the proof
-```
-
-### Recipe — populate mock domain data for visual verification
+### Recipe — populate mock domain data for verification
 
 When the operator asks to "populate mock data", "seed sample
 recipes", "fill in placeholder images", or "make the empty state
@@ -1014,12 +699,9 @@ This section grows as mistakes are discovered. Check it before writing code.
 - **`countAll()` returns string** -- wrap with `Number()`
 - **`whereIn()` with empty array crashes** -- guard with early return
 - **CamelCase in SELECT/INSERT, snake_case in WHERE/ORDER** -- the CamelCasePlugin only transforms result columns
-- **SPA error redirects use `replace()`, not `push()`** -- prevents back-button loops
-- **Hard reload after frontend changes** -- HMR is disabled
 - **Test isolation requires `createIsolatedUser()`** -- shared users cause FK violations in parallel tests
 - **Deno 2: `Deno.run` removed** -- use `new Deno.Command(...)` (Deno 1 idiom is the default in training data)
 - **Hono 4: custom context via `Hono<{ Variables: ... }>` generic** -- not v3 global `Hono.Variables` augmentation
 - **Arctic 2: tokens are objects with method calls** -- `tokens.accessToken()`, not `tokens.accessToken`
 - **date-fns 3: no default export** -- `import { format } from "date-fns"`, not `import dateFns from "date-fns"`
 - **Stripe 17: pin `apiVersion` on the client** -- SDK major and API version must agree
-- **Svelte 5 runes only** -- `$props()`, `$state()`, `$derived`, `$effect`, `{@render children()}`. NEVER `export let` (compile error)

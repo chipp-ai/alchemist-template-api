@@ -60,8 +60,6 @@ try {
   const localTarBuf = await new Deno.Command("tar", {
     args: [
       "--exclude=node_modules",
-      "--exclude=web/dist",
-      "--exclude=web/node_modules",
       "--exclude=.git",
       "--exclude=.scratch",
       "--exclude=._*", // macOS AppleDouble files break the migration runner

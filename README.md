@@ -119,7 +119,7 @@ This template is intentionally generic. The path from clone to "your product" is
 1. **Rewrite `CLAUDE.md`.** Replace the `[Project Name]` header and `[Brief description...]` paragraph with what you're actually building. This is the file every AI agent reads first -- get it right and agents need almost no orientation. See [working with AI agents](#working-with-ai-agents) below.
 2. **Centralize brand in `src/config/brand.ts`.** App name, logo, colors, marketing copy -- the template reads from one place so there are no string-literal leaks of "Alchemist" anywhere in your fork.
 3. **Add your schema.** Create migration files in `db/migrations/` following the `NNN_description.sql` convention. The runner applies them in order on startup. Update `src/db/schema.ts` with matching TypeScript types -- the `CamelCasePlugin` handles the case conversion at the DB boundary.
-4. **Add routes + services.** Drop new files into `src/api/routes/` and mount them in `src/api/index.ts`. Put the logic in `src/services/`. Keep routes thin.
+4. **Add routes + services.** Drop new files into `src/api/routes/` and mount them in `app.ts` (see `src/api/routes/example/` + its `app.route("/api", exampleRoutes)` mount for the minimal pattern). Put the logic in `src/services/`. Keep routes thin.
 
 The template ships with the foundation you'd otherwise build yourself: organizations, users, sessions, OAuth, OTP, Stripe customers + subscriptions, credit grants, user preferences, team invites. You shouldn't have to touch most of it -- just build your domain on top.
 
