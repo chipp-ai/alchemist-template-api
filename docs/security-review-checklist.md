@@ -62,8 +62,10 @@ learn the existence of B's data.
   hides the query). Escape `%`/`_` in ILIKE. Note Kysely's CamelCasePlugin maps
   camelCase ↔ snake_case even in raw `sql<…>` templates.
 - **Command:** array-argument exec, never string-interpolated shell.
-- **XSS:** `encodeURIComponent` in URL contexts; sanitize any user HTML/SVG;
-  Svelte auto-escapes `{expr}` — be careful with `{@html ...}`.
+- **XSS:** `encodeURIComponent` in URL contexts; sanitize any user HTML/SVG
+  before embedding in responses. This is a headless API template — no HTML
+  rendering server-side. If a consuming frontend uses a templating engine
+  or framework, that layer is responsible for output escaping.
 
 ## 6. Sensitive data exposure
 

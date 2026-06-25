@@ -32,7 +32,7 @@ All references to `__API_PORT__` in docs mean **your** API port from the file ab
 
 - **From an agent or terminal**, `curl -X POST -H 'Content-Type: application/json' -d '{"email":"agent@dev.local"}' http://localhost:__API_PORT__/api/dev/login -c /tmp/jar.txt` issues the same session. Re-use the cookie jar with `-b /tmp/jar.txt` on subsequent requests.
 
-The `/api/dev/*` routes 404 when `NODE_ENV=production` -- they are local-only by construction. See "Dev affordances" further down for the full route catalog (seed / reset / introspect).
+The `/api/dev/*` routes are **disabled unless `ALCHEMIST_DEV_ROUTES=1`** is set — fail-closed by design. Production never sets that flag, so the routes stay dark. See `src/lib/dev-mode.ts` and "Dev affordances" below for the full route catalog.
 
 ## Architecture
 
@@ -115,21 +115,20 @@ exposes them via the `load_skill` tool). Add a new spoke by dropping a
 
 ## Observability stream — `.scratch/logs/observability.jsonl`
 
-Every server log statement, HTTP request, server error, AND every browser-side breadcrumb (console.*, errors, fetch/XHR, clicks, route changes, LCP/CLS/INP) converges in **time order** into a single JSONL file at `.scratch/logs/observability.jsonl`. This is the canonical "what happened during this test session" stream — read it after a user has poked at the app to understand exactly what they did, what fired, and what failed.
+Every server log statement and HTTP request converges in **time order** into a single JSONL file at `.scratch/logs/observability.jsonl`. This is the canonical "what happened during this test session" stream.
 
-Each line is `{ts, sid, source: "client"|"server", kind, data}`. Stable `kind` slugs (do NOT mutate; analytics product depends on them): `server.log.{debug,info,warn,error}`, `server.http`, `server.error`, `client.console.{log,info,warn,error,debug}`, `client.error`, `client.promise`, `client.fetch`, `client.click`, `client.click.background`, `client.route`, `client.perf.{lcp,cls,inp}`, `client.session`.
+Each line is `{ts, sid, source: "server", kind, data}`. Server-side `kind` slugs (do NOT mutate; analytics product depends on them): `server.log.{debug,info,warn,error}`, `server.http`, `server.error`.
 
 Implementation lives in:
 - `src/observability/jsonl-writer.ts` — append-only writer with 10MB rotation
-- `src/observability/envelope.ts` — `recordServerEvent` / `recordClientEvents`
-- `src/api/routes/observability/index.ts` — `POST /api/_observability/breadcrumb` collector
+- `src/observability/envelope.ts` — `recordServerEvent`
 - Hooked into `src/lib/logger.ts` (every emit) and `src/lib/dev-activity.ts` (every recorded request + error)
 
-This template is headless (no web/ SPA). Observability covers server events only; client breadcrumbs are not applicable.
+This template is headless (no web/ SPA), so `source: "client"` events are not generated. The `/api/_observability/breadcrumb` collector route remains mounted for API consumers that want to write client breadcrumbs (e.g. a native mobile app or a standalone SPA that consumes this API).
 
-Dev-only — the entire pipeline no-ops when `NODE_ENV === "production"`. The analytics product will replace the collector with a remote ingest at that boundary when it ships.
+Dev-only — the entire pipeline no-ops when `NODE_ENV === "production"` (see `src/observability/jsonl-writer.ts`).
 
-**When debugging a user-reported issue, tail this file first** — `tail -n 200 .scratch/logs/observability.jsonl | jq .` gives the most recent slice of what happened in their session, both client and server, in time order.
+**When debugging a server-side issue, tail this file first** — `tail -n 200 .scratch/logs/observability.jsonl | jq .` gives the most recent slice of requests, log lines, and errors in time order.
 
 ## API Conventions
 
@@ -223,11 +222,11 @@ When set:
 - `/auth/me` returns `hipaaEnabled: true` and `sessionDurationMs: 14400000`.
 
 When unset/false:
-- 30-day default sessions, no activity tracking, no warning modal.
+- 30-day default sessions.
 
 There is **no per-user / per-org HIPAA toggle inside this template**. The whole deployed app is HIPAA-bound or it isn't — that's a project-scope decision the alchemist platform records and propagates via the env var. Don't add a `hipaa_enabled` column on `organizations`; the platform's onboarding flow + customer-pod env is the only source of truth.
 
-The `POST /auth/touch` endpoint re-issues a JWT with a fresh `exp` claim and resets the cookie. It calls `requireAuth`, so a session that already lapsed gets 401. Clients should treat 401 as a force-logout signal. The store throttles outgoing `/touch` calls to once per 5 minutes regardless of how active the user is.
+The `POST /auth/touch` endpoint re-issues a JWT with a fresh `exp` claim and resets the cookie. It calls `requireAuth`, so a session that already lapsed gets 401. **API clients should treat 401 from `/auth/touch` as a force-logout signal** and clear their stored session. Clients are responsible for throttling their own `/touch` calls (recommended: at most once every 5 minutes).
 
 ## Git Workflow
 
@@ -406,13 +405,14 @@ Verify response bodies, not just status codes. Use `jq` to inspect `.server.rece
 
 ## Dev affordances — DO NOT reverse-engineer auth from scratch
 
-When NODE_ENV is anything other than `production` (which is the case in
-the local dev stack AND inside the agent's E2B sandbox), the platform
-mounts a small set of **dev-only routes** at `/api/dev/*` so you can
-verify auth-gated flows without driving the OTP send + email + verify
-cycle. SMTP is not configured in the sandbox, so the OTP email goes to
-console — agents that try to verify the signup flow without these
-routes will spend tokens screen-scraping the log. Don't.
+When `ALCHEMIST_DEV_ROUTES=1` is set (wired into `deno task dev` and the
+E2B sandbox), the platform mounts a small set of **dev-only routes** at
+`/api/dev/*` so you can verify auth-gated flows without driving the OTP
+send + email + verify cycle. SMTP is not configured in the sandbox, so
+the OTP email goes to console — agents that try to verify the signup
+flow without these routes will spend tokens screen-scraping the log.
+Don't. The flag is fail-closed: production never sets it, so the routes
+stay dark in any deployed pod. See `src/lib/dev-mode.ts`.
 
 ### Available endpoints
 
@@ -461,15 +461,13 @@ curl -sS -b /tmp/jar.txt http://localhost:8000/api/auth/me
 
 **There is NO PATCH endpoint** — `/api/dev/seed` only does INSERT and `/api/dev/reset` only does TRUNCATE. To "update" existing rows, reset the table first then re-insert with the new column values. This is intentional: the dev surface stays small, and the agent's mental model is "what should the DB look like" rather than "what's the column-level diff".
 
-**Don't invent placeholders in components when the directive says "populate the data".** The user said "populate" because they want the DB rows to have real-looking values; a `<img src={photo_url ?? '/missing.svg'} />` fallback is not the same and feels broken if every row hits the fallback.
-
 ### Production safety
 
-The whole dev router is wrapped in a guard middleware that throws
-`NotFoundError` when `NODE_ENV === "production"`. The deployed
-customer pod always has `NODE_ENV=production` (set by the rollout
-controller) so the routes return 404 the same as if they had never
-been registered. Don't remove this guard — the routes bypass auth.
+The whole dev router is guarded by `devRoutesEnabled()` (reads
+`ALCHEMIST_DEV_ROUTES`) and throws `NotFoundError` when the flag is
+absent. The deployed customer pod never sets `ALCHEMIST_DEV_ROUTES`, so
+the routes return 404 as if they had never been registered. Don't
+remove this guard — the routes bypass auth.
 
 ## Library version idioms — fight your training-data defaults
 
