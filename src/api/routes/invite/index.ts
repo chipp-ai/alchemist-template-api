@@ -13,17 +13,19 @@
  * accessible without an org binding, since the user might not yet
  * belong to any org when accepting).
  *
- * The signup flow for new users is:
- *   1. Open /#/invite/:token (frontend route) — page loads, calls
- *      GET /api/invite/:token to render org name + role.
- *   2. Page shows "sign in or sign up to accept". User does OTP flow
- *      with the invite's email pre-filled.
- *   3. After verify-otp returns the session, page POSTs
- *      /api/invite/:token/accept. Backend ensures email match,
- *      moves the user into the org at the invited role.
+ * This is a headless API — there is no bundled frontend. A client
+ * (web app, mobile app, etc.) drives the flow against these endpoints:
+ *   1. The invite email links to your client's invite-accept surface
+ *      for :token (see buildAcceptUrl in invite.service.ts). The client
+ *      calls GET /api/invite/:token to render org name + role.
+ *   2. The client signs the user in (OTP flow with the invite's email
+ *      pre-filled, or detects an existing session).
+ *   3. With a session, the client POSTs /api/invite/:token/accept.
+ *      Backend ensures email match, moves the user into the org at the
+ *      invited role.
  *
- * For existing users (already signed in), the page detects the auth
- * state and POSTs straight to accept.
+ * Alternatively, the one-click magic-link path (POST /:token/claim)
+ * mints a session directly from the token — no separate sign-in step.
  */
 
 import { Hono } from "hono";
@@ -48,7 +50,7 @@ const inviteRoutes = new Hono();
  * needed AND mint a session right here — no OTP, no sign-in form. This
  * is the one-click flow: click the email link, land authenticated.
  *
- * Must be a POST triggered by the SPA's JS (not a GET), so a passive
+ * Must be a POST triggered by your client's JS (not a GET), so a passive
  * email-link prefetch can't consume the single-use invite.
  */
 inviteRoutes.post("/:token/claim", async (c) => {
