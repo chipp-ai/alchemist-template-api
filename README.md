@@ -136,6 +136,10 @@ CLAUDE.md          project context for AI agents
 
 See existing routes (e.g. `src/api/routes/health/`, `src/api/routes/auth/`) for the pattern. All routes use `zValidator` + `validationHook` and return `{ data }` or `{ error, code }`.
 
+### Import convention: bare specifiers only
+
+Source files import via **bare specifiers** declared in the `imports` map of `deno.json` (e.g. `import { Hono } from "hono"`). Do **not** inline `npm:` / `jsr:` / `https:` specifiers in source files -- add the dependency to `deno.json` and import the bare name. Inline prefixes trip `deno lint` (`no-import-prefix`) and fail CI.
+
 ## Development
 
 ```bash

@@ -4,6 +4,17 @@
 
 **Powered by Alchemist AI** -- Autonomous development platform.
 
+## What this is — the headless API starter template
+
+This project was generated from the Alchemist **headless API starter template** (`buildProfile: headless`) via `create_project(template_key='api')`. It is a Deno 2 + Hono 4 HTTP API with **no web frontend** — no Svelte SPA, no Vite, no static asset serving. The customer-build pipeline skips the SPA build stage for headless templates, so the repo builds and boots with no `web/` directory.
+
+Conventions that are load-bearing here:
+
+- **Deno 2** runtime idioms (`Deno.Command`, `Deno.serve`) — see "Library version idioms" below.
+- **Hono 4** for routing + middleware (`Hono<{ Variables: ... }>` typed context).
+- **Bare-specifier imports.** Source files import via bare specifiers declared in `deno.json`'s `imports` map (e.g. `import { Hono } from "hono"`, `import nodemailer from "nodemailer"`). **NEVER inline `npm:` / `jsr:` / `https:` specifiers in source** — add the dependency to `deno.json` and import the bare name. Inline prefixes trip `deno lint` (`no-import-prefix`) and red CI.
+- **Adding a new API route:** create `src/api/routes/<feature>/index.ts` exporting a Hono router, mount it in `app.ts` with `app.route("/api/<feature>", <feature>Routes)`, and put business logic in `src/services/<feature>.service.ts` (routes stay thin). See `src/api/routes/health/` and `.claude/rules/api-layer.md`.
+
 ## Local Dev Ports
 
 @.claude/local-dev.md

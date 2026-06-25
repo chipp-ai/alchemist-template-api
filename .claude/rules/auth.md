@@ -5,7 +5,6 @@ paths:
   - "src/auth/**"
   - "src/api/middleware/**"
   - "src/lib/roles.ts"
-  - "web/src/lib/permissions.ts"
   - "src/api/routes/org/**"
   - "src/api/routes/invite/**"
 ---
@@ -33,10 +32,11 @@ orgRoutes.post(
 
 ## Roles
 
-A 4-role hierarchy lives in **one** file — `src/lib/roles.ts` on the
-server, mirrored EXACTLY in `web/src/lib/permissions.ts` on the client.
-A regression test (`src/__tests__/team.test.ts → "client mirror"`) lints
-the two files for the same capability list and roles.
+A 4-role hierarchy lives in **one** file — `src/lib/roles.ts`. This is a
+headless API template (no web/ SPA), so roles + capabilities are defined
+and enforced server-side only; there is no client-side mirror to keep in
+sync. Capability checks happen in middleware (`requireCapability`) and
+the `can()` / `canManage()` helpers.
 
 | Role | Count | Powers |
 |---|---|---|
@@ -88,7 +88,9 @@ POST   /api/invite/:token/accept     → consume token (auth required;
                                        authenticated email must match invite email)
 ```
 
-Frontend route: `/#/invite/:token` → `web/src/routes/InviteAccept.svelte`.
+Clients consume the invite endpoints directly (this is a headless API —
+there is no SPA invite page). `GET /api/invite/:token` returns the
+public preview; `POST /api/invite/:token/accept` consumes the token.
 
 **CRITICAL: removing a member is SOFT-DISCONNECT, not hard-delete.** The
 `DELETE /members/:userId` route sets `users.organization_id = NULL` and
