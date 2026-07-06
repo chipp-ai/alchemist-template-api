@@ -171,3 +171,23 @@ export function withTestServer(
   setup(app);
   return app;
 }
+
+// ── hasWebDir ──
+
+/**
+ * True when this repo ships the Svelte SPA (web/). The headless templates
+ * (api, mcp-server) strip it; web-dependent lints/tests gate themselves
+ * on `!(await hasWebDir())` instead of throwing on a missing directory.
+ * Only a genuine "not found" counts as absent — any other stat error
+ * (permissions, bad resource) is re-thrown so it can't masquerade as a
+ * vacuous skip on a repo that actually ships a SPA.
+ */
+export async function hasWebDir(): Promise<boolean> {
+  try {
+    await Deno.stat(new URL("../../web/", import.meta.url));
+    return true;
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) return false;
+    throw err;
+  }
+}

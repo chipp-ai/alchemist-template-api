@@ -95,7 +95,8 @@ export interface ApiCredentialsTable {
   name: string;
   keyHash: string;
   keyPrefix: string;
-  scopes: string | null; // JSONB stored as string
+  /** JSONB string[] -- may arrive as an array or a JSON string. Pass arrays on write. */
+  scopes: unknown;
   isActive: Generated<boolean>;
   lastUsedAt: ColumnType<Date | null, Date | null | undefined, Date | null | undefined>;
   createdAt: CreatedAt;
@@ -158,6 +159,91 @@ export interface JobHistoryTable {
 export type JobHistory = Selectable<JobHistoryTable>;
 export type NewJobHistory = Insertable<JobHistoryTable>;
 
+// ── monetization (products + purchases) ──
+
+export type ProductType = "one_time" | "subscription";
+export type BillingInterval = "month" | "year";
+export type PurchaseStatus = "active" | "past_due" | "canceled" | "refunded";
+
+/**
+ * App-global sales catalog. Each row is backed by a Stripe Product +
+ * Price created automatically by product.service.ts. Gate features on
+ * `productKey` via hasActiveEntitlement(), never on the UUID.
+ */
+export interface ProductsTable {
+  id: Generated<string>;
+  productKey: string;
+  name: string;
+  description: string | null;
+  type: ProductType;
+  priceCents: number;
+  currency: Generated<string>;
+  billingInterval: BillingInterval | null;
+  stripeProductId: string | null;
+  stripePriceId: string | null;
+  active: Generated<boolean>;
+  /**
+   * Credits granted when this product is bought. one_time = top-up pack
+   * (granted at checkout completion); subscription = per-cycle allowance
+   * (granted on every invoice.paid). NULL = not a credit product.
+   */
+  grantsCredits: number | null;
+  createdAt: CreatedAt;
+  updatedAt: UpdatedAt;
+}
+
+export type Product = Selectable<ProductsTable>;
+export type NewProduct = Insertable<ProductsTable>;
+export type ProductUpdate = Updateable<ProductsTable>;
+
+/**
+ * Org-scoped entitlement records, written by the Stripe webhook. One row
+ * per one-time checkout or per product subscription.
+ */
+export interface PurchasesTable {
+  id: Generated<string>;
+  organizationId: string;
+  productId: string;
+  purchasedBy: string | null;
+  status: Generated<PurchaseStatus>;
+  stripeCheckoutSessionId: string | null;
+  stripeSubscriptionId: string | null;
+  stripePaymentIntentId: string | null;
+  amountCents: Generated<number>;
+  currency: Generated<string>;
+  currentPeriodEnd: ColumnType<Date | null, Date | null | undefined, Date | null | undefined>;
+  canceledAt: ColumnType<Date | null, Date | null | undefined, Date | null | undefined>;
+  createdAt: CreatedAt;
+  updatedAt: UpdatedAt;
+}
+
+export type Purchase = Selectable<PurchasesTable>;
+export type NewPurchase = Insertable<PurchasesTable>;
+export type PurchaseUpdate = Updateable<PurchasesTable>;
+
+
+// ── prepaid credits (ledger) ──
+
+/** One row per org: the atomic spend gate. BIGINT arrives as a string. */
+export interface CreditBalancesTable {
+  organizationId: string;
+  balance: ColumnType<string | bigint, bigint | number, bigint | number>;
+  updatedAt: UpdatedAt;
+}
+
+/** Append-only audit trail; external_ref makes webhook grants idempotent. */
+export interface CreditLedgerEntriesTable {
+  id: Generated<string>;
+  organizationId: string;
+  delta: ColumnType<string | bigint, bigint | number, never>;
+  reason: string;
+  externalRef: string | null;
+  metadata: unknown;
+  createdAt: CreatedAt;
+}
+
+export type CreditLedgerEntry = Selectable<CreditLedgerEntriesTable>;
+
 // ── Database interface ──
 // Register your domain tables here.
 //
@@ -201,4 +287,8 @@ export interface Database {
   token_usage: TokenUsageTable;
   job_history: JobHistoryTable;
   doc_search_index: DocSearchIndexTable;
+  products: ProductsTable;
+  purchases: PurchasesTable;
+  credit_balances: CreditBalancesTable;
+  credit_ledger_entries: CreditLedgerEntriesTable;
 }

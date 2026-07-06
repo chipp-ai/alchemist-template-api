@@ -33,6 +33,7 @@ import {
   roleLabel,
   type Capability,
 } from "@/lib/roles.ts";
+import { hasWebDir } from "./helpers.ts";
 
 function deno(name: string, fn: () => void | Promise<void>) {
   Deno.test({ name, sanitizeResources: false, sanitizeOps: false, fn });
@@ -87,6 +88,13 @@ deno("capabilities: viewer has read but no write/team/org actions", () => {
   assertEquals(can("viewer", "team.update_role"), false);
   assertEquals(can("viewer", "team.remove"), false);
   assertEquals(can("viewer", "org.update"), false);
+  assertEquals(can("viewer", "billing.manage"), false);
+});
+
+deno("capabilities: admin can manage billing (product catalog)", () => {
+  assertEquals(can("admin", "billing.manage"), true);
+  assertEquals(can("owner", "billing.manage"), true);
+  assertEquals(can("editor", "billing.manage"), false);
 });
 
 deno("capabilities: editor has write but no team/org actions", () => {
@@ -178,6 +186,11 @@ deno("registry: ASSIGNABLE_ROLES excludes 'owner' (invite-can-never-confer-owner
 // ── Client mirror lint ────────────────────────────────────────────────────
 
 deno("client mirror: web/src/lib/permissions.ts has the same capability list", async () => {
+  if (!(await hasWebDir())) {
+    // Headless template (MCP-server) has no web/ SPA — client permissions
+    // mirror is not applicable.
+    return;
+  }
   // Both the server (lib/roles.ts) and client (web/src/lib/permissions.ts)
   // declare CAPABILITIES. They MUST be identical — drift means an
   // admin button shows in the UI but the API returns 403.
@@ -287,6 +300,10 @@ deno("source: migration 003 adds 'editor' enum value + backfills 'member'", asyn
 });
 
 deno("source: routes.ts wires /invite/:token + isPublicRoute prefix-matches it", async () => {
+  if (!(await hasWebDir())) {
+    // Headless template (MCP-server) has no web/ SPA — no routes.ts SPA router.
+    return;
+  }
   const src = await Deno.readTextFile(
     new URL("../../web/src/routes.ts", import.meta.url),
   );
@@ -310,6 +327,10 @@ deno("source: routes.ts wires /invite/:token + isPublicRoute prefix-matches it",
 });
 
 deno("source: Settings.svelte renders pending invites + role-update dropdowns", async () => {
+  if (!(await hasWebDir())) {
+    // Headless template (MCP-server) has no web/ SPA — no Settings.svelte.
+    return;
+  }
   const src = await Deno.readTextFile(
     new URL("../../web/src/routes/Settings.svelte", import.meta.url),
   );

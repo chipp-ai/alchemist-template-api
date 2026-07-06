@@ -20,6 +20,7 @@ import { healthRoutes } from "@/api/routes/health/index.ts";
 import { authRoutes } from "@/api/routes/auth/index.ts";
 import { orgRoutes } from "@/api/routes/org/index.ts";
 import { billingRoutes } from "@/api/routes/billing/index.ts";
+import { apiKeyRoutes } from "@/api/routes/api-keys/index.ts";
 import { devRoutes } from "@/api/routes/dev/index.ts";
 import { fileRoutes } from "@/api/routes/files/index.ts";
 import { inviteRoutes } from "@/api/routes/invite/index.ts";
@@ -100,6 +101,11 @@ app.route("/", healthRoutes);
 app.route("/api/auth", authRoutes);
 app.route("/api/org", orgRoutes);
 app.route("/api/billing", billingRoutes);
+
+// API keys -- programmatic auth for this API product (Bearer api_sk_...
+// via requireAuthOrApiKey). Session-only management: a leaked key must
+// not be able to mint replacement keys.
+app.route("/api/api-keys", apiKeyRoutes);
 
 // In-app docs section + semantic search. Auth-required (docs are
 // internal). Content is static (the registry); search is served from

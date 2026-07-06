@@ -711,6 +711,65 @@ this for `*.adaas.dev` automatically — see chipp-ai/alchemist-ai
 adds the origin to the bucket-level rule when the customer registers
 the domain (see `R2 Bucket CORS` in alchemist-ai/CLAUDE.md).
 
+## Monetizing this API -- auth + three charging lanes (do NOT rebuild)
+
+The template ships everything needed to SELL access to your endpoints.
+**When a ticket says "charge for this endpoint", "add a premium plan",
+"meter usage", or "sell API access", wire it through this layer -- never
+hand-roll Stripe calls, key systems, entitlement checks, or a credit
+ledger.**
+
+### Programmatic auth -- API keys
+
+`requireAuthOrApiKey` (src/api/middleware/api-key-auth.ts) accepts the
+session cookie OR `Authorization: Bearer api_sk_...` and populates the same
+`c.get("user")` either way, so every downstream gate works for both caller
+types. Keys are minted via `POST /api/api-keys` (SESSION-only on purpose --
+a leaked key must not mint replacement keys), hashed at rest, shown once,
+verified with a constant-time compare (src/services/api-key.service.ts on
+the api_credentials table).
+
+### Charging lanes (src/api/middleware/monetize.ts)
+
+| Middleware | Business model | Failure shape |
+|---|---|---|
+| `requirePurchase("pro")` | Subscription or one-time unlock (products layer) | 402 `ENTITLEMENT_REQUIRED` + `checkoutUrl` |
+| `chargeCredits(5)` | Prepaid metering per request (local credit ledger) | 402 `INSUFFICIENT_CREDITS` + balance + top-up `checkoutUrl` |
+| `mppPaid({ fiatUsd: "0.50", cryptoUsd: "0.01" })` | MPP machine payments, per request, no account (https://docs.stripe.com/payments/machine/mpp) | 402 + signed `WWW-Authenticate: Payment` challenges |
+
+```ts
+app.get("/api/reports", requireAuthOrApiKey, requirePurchase("pro"), handler);
+app.post("/api/analyze", requireAuthOrApiKey, chargeCredits(5), handler);
+app.get("/api/data", mppPaid({ fiatUsd: "0.50" }), handler); // account-free
+```
+
+The first two REQUIRE identity (apply after `requireAuthOrApiKey`); `mppPaid`
+needs none (payment IS the credential; MPP_SECRET_KEY + Stripe env, see
+.env.example) and composes with the others. 402 bodies are machine-actionable
+(stable `code`, `checkoutUrl` when a purchase fixes it) so agent callers can
+relay the link to a human instead of blind-retrying.
+
+### The layer underneath
+
+- **Products**: `products` + `purchases` tables; `POST /api/billing/products`
+  (billing.manage) auto-creates the Stripe Product/Price -- no dashboard
+  steps. Webhook fulfillment is idempotent, and product subscriptions NEVER
+  touch `organizations.subscription_tier` (routing on `metadata.productId`).
+- **Credits** (`src/services/credit.service.ts`): local ledger authoritative,
+  Stripe is only the payment rail. Atomic conditional-UPDATE debits (never
+  negative, never read-modify-write); idempotent grants -- one-time
+  `grantsCredits` packs on `checkout.session.completed` (`cs:{id}`),
+  subscription allowances on EVERY `invoice.paid` (`inv:{id}`), never both
+  (the first period would double-grant). `GET /api/billing/credits` exposes
+  balance + entries; checkout return page at
+  `GET /api/billing/purchase/complete`.
+- **Refund-on-failure**: `chargeCredits` refunds when the handler fails.
+  CRITICAL Hono gotcha: handler exceptions do NOT propagate through
+  middleware try/catch (compose dispatches app.onError directly and
+  `await next()` resolves normally) -- the refund keys off `c.error`, which
+  Hono sets when a handler threw. A try/catch around `next()` is dead code
+  that silently keeps the debit.
+
 ## Verification Checklist
 
 Before reporting any implementation as complete:
