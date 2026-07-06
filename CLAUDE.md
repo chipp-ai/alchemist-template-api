@@ -737,6 +737,14 @@ the api_credentials table).
 | `chargeCredits(5)` | Prepaid metering per request (local credit ledger) | 402 `INSUFFICIENT_CREDITS` + balance + top-up `checkoutUrl` |
 | `mppPaid({ fiatUsd: "0.50", cryptoUsd: "0.01" })` | MPP machine payments, per request, no account (https://docs.stripe.com/payments/machine/mpp) | 402 + signed `WWW-Authenticate: Payment` challenges |
 
+`cryptoUsd` serves up to TWO crypto rails at once, each env-gated: USDC on
+Tempo (Stripe-settled, `MPP_CRYPTO_ENABLED=1`) and **x402 on Base**
+(`MPP_X402_RECIPIENT` wallet; the open x402 protocol -- the 402 carries BOTH
+the MPP `WWW-Authenticate` challenge AND the x402 `PAYMENT-REQUIRED` header,
+so existing x402 agents pay natively). x402 settles ON-CHAIN to the wallet,
+not the Stripe balance; mainnet requires an explicit `MPP_X402_FACILITATOR`
+URL (fail closed -- never default a money-path facilitator).
+
 ```ts
 app.get("/api/reports", requireAuthOrApiKey, requirePurchase("pro"), handler);
 app.post("/api/analyze", requireAuthOrApiKey, chargeCredits(5), handler);

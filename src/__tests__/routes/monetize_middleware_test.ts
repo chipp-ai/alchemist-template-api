@@ -259,3 +259,59 @@ Deno.test({
     },
   ),
 });
+
+Deno.test({
+  name: "mpp: x402 lane (Base USDC) issues challenges on BOTH wire formats, no Stripe needed",
+  sanitizeResources: false,
+  sanitizeOps: false,
+  fn: withEnv({
+    MPP_SECRET_KEY: "dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS0xMg==",
+    MPP_X402_RECIPIENT: "0x1111111111111111111111111111111111111111",
+    MPP_X402_TESTNET: "1",
+    STRIPE_SECRET_KEY: null,
+    STRIPE_PROFILE_ID: null,
+  }, async () => {
+    // Challenge generation is offline; the facilitator is only contacted
+    // when a client presents an x402 payment.
+    const app = withTestServer((a) => {
+      a.get("/x402-paid", mppPaid({ cryptoUsd: "0.01" }), (c) => c.json({ data: "secret" }));
+    });
+    const res = await app.request("http://localhost/x402-paid");
+    assertEquals(res.status, 402);
+    // MPP wire format: WWW-Authenticate Payment challenge with method=evm.
+    const wwwAuth = res.headers.get("www-authenticate") ?? "";
+    assert(wwwAuth.startsWith("Payment "), `expected Payment challenge, got: ${wwwAuth.slice(0, 60)}`);
+    assert(wwwAuth.includes('method="evm"'), `expected evm method, got: ${wwwAuth.slice(0, 120)}`);
+    // x402 wire format: the PAYMENT-REQUIRED header the existing x402
+    // agent ecosystem understands natively.
+    const x402Header = res.headers.get("payment-required");
+    assertExists(x402Header, "expected the x402 PAYMENT-REQUIRED header");
+    const text = await res.text();
+    assertEquals(text.includes("secret"), false, "route must not run unpaid");
+  }),
+});
+
+Deno.test({
+  name: "mpp: x402 mainnet without an explicit facilitator fails closed (misconfig, not silent)",
+  sanitizeResources: false,
+  sanitizeOps: false,
+  fn: withEnv({
+    MPP_SECRET_KEY: "dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS0xMg==",
+    MPP_X402_RECIPIENT: "0x1111111111111111111111111111111111111111",
+    MPP_X402_TESTNET: null,
+    MPP_X402_FACILITATOR: null,
+    STRIPE_SECRET_KEY: null,
+    STRIPE_PROFILE_ID: null,
+  }, async () => {
+    // Mainnet REQUIRES an explicit facilitator -- settling against a default
+    // one would be a silent money-path decision. The lane reads as
+    // unconfigured instead.
+    const app = withTestServer((a) => {
+      a.get("/x402-paid", mppPaid({ cryptoUsd: "0.01" }), (c) => c.json({ data: "secret" }));
+    });
+    const res = await app.request("http://localhost/x402-paid");
+    assertEquals(res.status, 503);
+    const body = await res.json();
+    assertEquals(body.code, "PAYMENTS_UNCONFIGURED");
+  }),
+});

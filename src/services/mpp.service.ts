@@ -9,15 +9,27 @@
  * `Authorization: Payment ...` credential. Verified requests run the route
  * and the response carries a payment receipt header.
  *
- * Two payment methods, each env-gated:
+ * Three payment methods, each env-gated:
  *
  *   FIAT (Stripe SPT)   STRIPE_SECRET_KEY + STRIPE_PROFILE_ID
  *                       Card/wallet via Stripe rails. Min charge 0.50 USD.
+ *                       Settles into the Stripe balance.
  *   CRYPTO (Tempo USDC) MPP_CRYPTO_ENABLED=1 + STRIPE_SECRET_KEY
  *                       On-chain USDC, charges as low as 0.01 USD. Requires
  *                       the "Stablecoins and Crypto" payment method approved
  *                       on the Stripe account. MPP_CRYPTO_TESTNET=1 targets
- *                       the Tempo testnet (pathUSD).
+ *                       the Tempo testnet (pathUSD). Settles into the Stripe
+ *                       balance (Stripe-managed deposit addresses).
+ *   X402 (Base USDC)    MPP_X402_RECIPIENT (0x wallet) [+ MPP_X402_FACILITATOR]
+ *                       The open x402 protocol (x402.org, Linux Foundation)
+ *                       -- reaches the existing x402 agent ecosystem on
+ *                       Base; challenges ride BOTH the MPP WWW-Authenticate
+ *                       header AND the x402 X-Payment-Required header.
+ *                       Settles ON-CHAIN to YOUR wallet, NOT the Stripe
+ *                       balance; a facilitator verifies/settles (default on
+ *                       testnet: https://x402.org/facilitator; mainnet
+ *                       REQUIRES an explicit facilitator URL, e.g. Coinbase
+ *                       CDP). MPP_X402_TESTNET=1 targets Base Sepolia.
  *
  * MPP_SECRET_KEY (required to enable either lane) signs payment challenges
  * (challenge binding, https://mpp.dev/protocol/challenges). It MUST be a
@@ -26,7 +38,7 @@
 
 import Stripe from "stripe";
 import { Credential } from "mppx";
-import { Mppx, stripe as mppStripe, tempo } from "mppx/server";
+import { evm, Mppx, stripe as mppStripe, tempo } from "mppx/server";
 import { log } from "@/lib/logger.ts";
 
 // Tempo USDC token contract addresses (from the Stripe MPP guide).
@@ -48,12 +60,18 @@ export type HttpPaymentGateResult =
   | { kind: "challenge"; response: Response }
   | { kind: "unconfigured"; message: string };
 
+const X402_DEFAULT_TESTNET_FACILITATOR = "https://x402.org/facilitator";
+const EVM_ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
+
 interface MppConfig {
   secretKey: string;
   stripeSecretKey: string | null;
   stripeProfileId: string | null;
   cryptoEnabled: boolean;
   cryptoTestnet: boolean;
+  x402Recipient: string | null;
+  x402Facilitator: string | null;
+  x402Testnet: boolean;
 }
 
 function readConfig(): MppConfig | null {
@@ -65,14 +83,32 @@ function readConfig(): MppConfig | null {
     stripeProfileId: Deno.env.get("STRIPE_PROFILE_ID") || null,
     cryptoEnabled: Deno.env.get("MPP_CRYPTO_ENABLED") === "1",
     cryptoTestnet: Deno.env.get("MPP_CRYPTO_TESTNET") === "1",
+    x402Recipient: Deno.env.get("MPP_X402_RECIPIENT") || null,
+    x402Facilitator: Deno.env.get("MPP_X402_FACILITATOR") || null,
+    x402Testnet: Deno.env.get("MPP_X402_TESTNET") === "1",
   };
+}
+
+/**
+ * The x402 lane is on when a VALID 0x recipient is set and a facilitator is
+ * resolvable (testnet has a public default; mainnet requires an explicit
+ * facilitator URL -- fail closed rather than settle against the wrong one).
+ */
+function x402Config(cfg: MppConfig): { recipient: `0x${string}`; facilitator: string } | null {
+  if (!cfg.x402Recipient || !EVM_ADDRESS_RE.test(cfg.x402Recipient)) return null;
+  const facilitator = cfg.x402Facilitator ??
+    (cfg.x402Testnet ? X402_DEFAULT_TESTNET_FACILITATOR : null);
+  if (!facilitator) return null;
+  return { recipient: cfg.x402Recipient as `0x${string}`, facilitator };
 }
 
 export function mppEnabled(): boolean {
   const cfg = readConfig();
   if (!cfg) return false;
   return Boolean(
-    (cfg.stripeSecretKey && cfg.stripeProfileId) || (cfg.cryptoEnabled && cfg.stripeSecretKey),
+    (cfg.stripeSecretKey && cfg.stripeProfileId) ||
+      (cfg.cryptoEnabled && cfg.stripeSecretKey) ||
+      x402Config(cfg),
   );
 }
 
@@ -103,6 +139,16 @@ function getMppx(cfg: MppConfig): any {
         secretKey: cfg.stripeSecretKey,
         networkId: cfg.stripeProfileId,
         paymentMethodTypes: ["card", "link"],
+      }),
+    );
+  }
+  const x402 = x402Config(cfg);
+  if (x402) {
+    methods.push(
+      evm.charge({
+        currency: cfg.x402Testnet ? evm.assets.baseSepolia.USDC : evm.assets.base.USDC,
+        recipient: x402.recipient,
+        x402: { facilitator: x402.facilitator },
       }),
     );
   }
@@ -250,6 +296,9 @@ export async function gatePaidRequest(
     if (recipient) {
       handlers.push(mppx.tempo.charge({ amount: price.cryptoUsd, recipient }));
     }
+  }
+  if (price.cryptoUsd && x402Config(cfg)) {
+    handlers.push(mppx.evm.charge({ amount: price.cryptoUsd }));
   }
   if (price.fiatUsd && cfg.stripeSecretKey && cfg.stripeProfileId) {
     handlers.push(
