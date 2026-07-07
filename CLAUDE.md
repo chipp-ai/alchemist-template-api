@@ -142,6 +142,24 @@ Dev-only — the entire pipeline no-ops when `NODE_ENV === "production"`. The an
 > `zValidator` MUST pass `validationHook`, and every response is `{ data }` or
 > `{ error, code }`.
 
+### Human-viewable docs at `/docs` (server-rendered HTML)
+
+This headless template has no SPA, so human-viewable docs are served as
+server-rendered HTML at `/docs` (index) and `/docs/:slug`
+(`src/api/routes/docs-html/index.ts`), mounted PUBLIC in `app.ts`. Content is
+the SAME `docs/in-app/*.md` files + `DOCS_PAGES` registry
+(`src/services/docs/registry.ts`) that power the auth-required JSON API at
+`/api/docs` -- add a page by dropping markdown in `docs/in-app/` and
+registering it; the boot-time reindexer picks it up for semantic search
+automatically. Registry entries with `requiresAuth: true` get a uniform 404 on
+the HTML surface unless a session cookie is present. `/docs/endpoints`
+enumerates the LIVE mounted `/api/*` routes: app.ts injects its route table
+via `setEndpointSource(() => app.routes)` after mounting (injection, not a
+back-import of app.ts, to avoid a circular import) -- never hardcode an
+endpoint list in docs. The renderer (`src/services/docs/render-html.ts`) is
+the SECURITY BOUNDARY: escape-first, no raw-HTML passthrough, allowlisted
+link schemes only -- never render docs markdown to HTML any other way.
+
 ## Database Conventions
 
 > **Detailed database rules live in `.claude/rules/database.md`** (Postgres

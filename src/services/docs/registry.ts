@@ -24,6 +24,14 @@ export interface DocPage {
   summary: string;
   /** Markdown body — a live read of a `docs/**` file. */
   body: string;
+  /**
+   * When true, the PUBLIC server-rendered HTML surface at `/docs`
+   * (src/api/routes/docs-html/) responds with a uniform 404 for this page
+   * unless the request carries a valid session. Defaults to false (public
+   * on the HTML surface). The JSON API at `/api/docs` is unaffected -- it
+   * requires auth for EVERY page regardless of this flag.
+   */
+  requiresAuth?: boolean;
 }
 
 /**
@@ -37,11 +45,22 @@ function loadDoc(relPath: string): string {
 
 export const DOCS_PAGES: DocPage[] = [
   {
+    slug: "api-reference",
+    title: "API reference",
+    group: "Reference",
+    summary: "Authentication, the response envelope, error codes, and a worked curl example.",
+    body: loadDoc("docs/in-app/api-reference.md"),
+    requiresAuth: false, // connection docs for external users of the deployed API
+  },
+  {
     slug: "welcome",
     title: "Welcome to your in-app docs",
     group: "Getting started",
     summary: "What the docs section is and how it works.",
     body: loadDoc("docs/in-app/welcome.md"),
+    // Internal team doc (describes the docs infrastructure itself) -- keep
+    // it off the public HTML surface; visible there only with a session.
+    requiresAuth: true,
   },
   {
     slug: "searching-docs",
@@ -49,6 +68,7 @@ export const DOCS_PAGES: DocPage[] = [
     group: "Getting started",
     summary: "Semantic search, what gets indexed, and auto-reindexing.",
     body: loadDoc("docs/in-app/searching-docs.md"),
+    requiresAuth: true,
   },
 ];
 

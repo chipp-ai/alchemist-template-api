@@ -27,6 +27,7 @@ import { inviteRoutes } from "@/api/routes/invite/index.ts";
 import { realtimeRoutes } from "@/api/routes/realtime/index.ts";
 import { observabilityRoutes } from "@/api/routes/observability/index.ts";
 import { docsRoutes } from "@/api/routes/docs/index.ts";
+import { docsHtmlRoutes, setEndpointSource } from "@/api/routes/docs-html/index.ts";
 import { ingestEmailRoutes } from "@/api/routes/ingest-email/index.ts";
 import { inboundEmailRoutes } from "@/api/routes/inbound-emails/index.ts";
 import { devRoutesEnabled } from "@/lib/dev-mode.ts";
@@ -114,6 +115,12 @@ app.route("/api/api-keys", apiKeyRoutes);
 // the boot-built index (src/services/docs/). See docs/in-app/.
 app.route("/api/docs", docsRoutes);
 
+// Human-viewable docs (PUBLIC, server-rendered HTML -- no SPA in this
+// template). Same registry + markdown as /api/docs; pages flagged
+// requiresAuth in the registry 404 without a session. Includes the live
+// /docs/endpoints route index. See src/api/routes/docs-html/index.ts.
+app.route("/docs", docsHtmlRoutes);
+
 // File storage (R2 — tenant-isolated via R2_KEY_PREFIX, see
 // src/services/storage.service.ts). Auth-required. Provides
 // presigned upload + download URLs so the browser can talk to R2
@@ -160,6 +167,13 @@ app.route("/api/_observability", observabilityRoutes);
 // file serving — only the /api/* routes mounted above. Unmatched paths
 // fall through to the JSON 404 in app.notFound below. To add a frontend,
 // generate from the web-app template instead of this one.
+
+// Feed the live route table to the /docs/endpoints page. Injected (not
+// imported from the route module) to avoid a circular import -- app.ts
+// already imports docs-html to mount it. Must run AFTER all app.route()
+// calls above so the table is complete; the callback re-reads app.routes
+// per request, so later-added routes would show up too.
+setEndpointSource(() => app.routes.map((r) => ({ method: r.method, path: r.path })));
 
 // ── Global error handler ──
 
