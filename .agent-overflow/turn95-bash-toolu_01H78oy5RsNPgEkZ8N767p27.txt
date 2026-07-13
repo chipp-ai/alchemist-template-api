@@ -1,0 +1,1616 @@
+[0m[38;5;245mrunning 15 tests from ./src/__tests__/dev-snapshot-restore.test.ts[0m
+routes: POST /api/dev/snapshot is registered ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+routes: POST /api/dev/restore is registered ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+routes: GET /api/dev/login is registered ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+routes: GET /api/dev/snapshots is registered (list) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+schema: tag regex constrains to safe characters ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+schema: dot-dot in tag would be rejected by the regex ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+get-login: redirect param is restricted to relative paths ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+get-login: schema accepts email + optional redirect ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+prod-guard: dev routes short-circuit via devRoutesEnabled to NotFoundError ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+prod-guard: every dev route is mounted behind the devRoutesEnabled guard ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+storage: snapshots land under /tmp/alchemist-snapshots ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+storage: snapshot filename is sanitized tag + .json ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+discovery: snapshot tables are discovered at runtime via information_schema ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+discovery: skip kysely_migration tables to avoid version pinning ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+discovery: restore TRUNCATEs with CASCADE in reverse dep order ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+[0m[38;5;245mrunning 14 tests from ./src/__tests__/devpanel.test.ts[0m
+ring: recordRequest appends most-recent-first ...
+[0m[38;5;245m------- post-test output -------[0m
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:45:3
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:45:3
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:53:3
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ring: recordRequest appends most-recent-first ... [0m[32mok[0m [0m[38;5;245m(4ms)[0m
+ring: recordRequest caps at 20 entries (oldest evicted) ...
+[0m[38;5;245m------- post-test output -------[0m
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:71:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ring: recordRequest caps at 20 entries (oldest evicted) ... [0m[32mok[0m [0m[38;5;245m(9ms)[0m
+ring: recordError caps at 10 entries ...
+[0m[38;5;245m------- post-test output -------[0m
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordError (file:///workspace/src/lib/dev-activity.ts:87:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:91:5
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ring: recordError caps at 10 entries ... [0m[32mok[0m [0m[38;5;245m(7ms)[0m
+ring: getRecentRequests returns a fresh array (caller can't mutate) ...
+[0m[38;5;245m------- post-test output -------[0m
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at recordRequest (file:///workspace/src/lib/dev-activity.ts:65:3)
+    at file:///workspace/src/__tests__/devpanel.test.ts:98:3
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33)
+    at outerWrapped (ext:cli/40_test.js:123:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ring: getRecentRequests returns a fresh array (caller can't mutate) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: every web/src/stores/*.svelte.ts uses defineStore ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: web/src/main.ts calls initDevPanel before mounting App ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: web/src/App.svelte mounts <DevPanel /> ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: app.ts mounts recentActivityMiddleware gated on devRoutesEnabled ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: no $effect-on-mount loops in *.svelte components (live-bug regression guard) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: push pipeline doesn't dedup on shallow signature (live-bug regression guard) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: dev-routes register POST and GET /app-state ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+e2e: GET /api/dev/app-state returns server context even with no client push ... [0m[32mok[0m [0m[38;5;245m(22ms)[0m
+e2e: POST /api/dev/app-state persists the client snapshot for subsequent GETs ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+e2e: GET /api/dev/app-state?format=markdown returns text/markdown ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+[0m[38;5;245mrunning 0 tests from ./src/__tests__/helpers.ts[0m
+[0m[38;5;245mrunning 2 tests from ./src/__tests__/redis-helper.test.ts[0m
+redis helpers: unconfigured env is a silent no-op ... [0m[32mok[0m [0m[38;5;245m(1ms)[0m
+redis helpers: unreachable REDIS_URL fails open (bounded, no throw) ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"warn","ts":"2026-07-13T02:12:57.756Z","version":"dev","env":"test","msg":"redis: cache-get failed (fail-open)","source":"redis","feature":"cache-get","error_message":"redis op timed out after 500ms","error_stack":"Error: redis op timed out after 500ms\n    at file:///workspace/src/lib/redis.ts:61:31\n    at callback (ext:deno_web/02_timers.js:58:7)\n    at eventLoopTick (ext:core/01_core.js:213:13)"}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at run (file:///workspace/src/lib/redis.ts:143:9)
+    at eventLoopTick (ext:core/01_core.js:217:9)
+    at async cacheGet (file:///workspace/src/lib/redis.ts:154:15)
+    at async file:///workspace/src/__tests__/redis-helper.test.ts:67:18 {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at run (file:///workspace/src/lib/redis.ts:143:9)
+    at eventLoopTick (ext:core/01_core.js:217:9)
+    at async cacheGet (file:///workspace/src/lib/redis.ts:154:15)
+    at async file:///workspace/src/__tests__/redis-helper.test.ts:67:18 {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+redis helpers: unreachable REDIS_URL fails open (bounded, no throw) ... [0m[32mok[0m [0m[38;5;245m(508ms)[0m
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:57.946Z","version":"dev","env":"test","msg":"SMTP not configured -- emails will be logged to console","source":"email"}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/email.ts:41:7 {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/email.ts:41:7 {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+[0m[38;5;245mrunning 8 tests from ./src/__tests__/routes/docs_html_test.ts[0m
+docs-html: index renders groups and page links ... [0m[32mok[0m [0m[38;5;245m(5ms)[0m
+docs-html: index hides requiresAuth pages from anonymous visitors ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+docs-html: /docs/endpoints lists real mounted routes ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:57.993Z","version":"dev","env":"test","msg":"GET /* 200 9.91ms","source":"performance","feature":"request-timing","method":"GET","route":"/*","path":"/docs/endpoints","status":200,"duration_ms":9.91,"isStreaming":false}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/api/middleware/request-timing.ts:83:11
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17)
+    at async timing2 (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/middleware/timing/timing.js:29:5)
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+docs-html: /docs/endpoints lists real mounted routes ... [0m[32mok[0m [0m[38;5;245m(15ms)[0m
+docs-html: /docs/endpoints excludes dev + observability routes and middleware ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:57.996Z","version":"dev","env":"test","msg":"GET /* 200 0.55ms","source":"performance","feature":"request-timing","method":"GET","route":"/*","path":"/docs/endpoints","status":200,"duration_ms":0.55,"isStreaming":false}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/api/middleware/request-timing.ts:83:11
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17)
+    at async timing2 (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/middleware/timing/timing.js:29:5)
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+docs-html: /docs/endpoints excludes dev + observability routes and middleware ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+docs-html: /docs/:slug renders the page markdown ... [0m[32mok[0m [0m[38;5;245m(1ms)[0m
+docs-html: unknown slug 404s ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+docs-html: requiresAuth page 404s unauthenticated, uniform with unknown ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+docs-html: mounted on the real app at /docs ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.001Z","version":"dev","env":"test","msg":"GET /* 200 0.22ms","source":"performance","feature":"request-timing","method":"GET","route":"/*","path":"/docs","status":200,"duration_ms":0.22,"isStreaming":false}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/api/middleware/request-timing.ts:83:11
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17)
+    at async timing2 (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/middleware/timing/timing.js:29:5)
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+docs-html: mounted on the real app at /docs ... [0m[32mok[0m [0m[38;5;245m(1ms)[0m
+[0m[38;5;245mrunning 5 tests from ./src/__tests__/routes/ingest-email.test.ts[0m
+ingest-email: token unset -> 401 (fail closed) ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"warn","ts":"2026-07-13T02:12:58.149Z","version":"dev","env":"test","msg":"ingest-email-webhook auth rejected","source":"ingest-email-webhook","feature":"auth","reason":"INGEST_EMAIL_TOKEN unset"}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at reject (file:///workspace/src/api/middleware/ingest-email-token.ts:59:9)
+    at file:///workspace/src/api/middleware/ingest-email-token.ts:84:5
+    at dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:23)
+    at file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:5:12 {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at reject (file:///workspace/src/api/middleware/ingest-email-token.ts:59:9)
+    at file:///workspace/src/api/middleware/ingest-email-token.ts:84:5
+    at dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:23)
+    at file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:5:12 {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ingest-email: token unset -> 401 (fail closed) ... [0m[32mok[0m [0m[38;5;245m(8ms)[0m
+ingest-email: wrong token -> 401 ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.155Z","version":"dev","env":"test","msg":"ingest-email-webhook auth rejected","source":"ingest-email-webhook","feature":"auth","reason":"token mismatch"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at reject (file:///workspace/src/api/middleware/ingest-email-token.ts:61:9)
+    at file:///workspace/src/api/middleware/ingest-email-token.ts:98:5
+    at dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:23)
+    at file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:5:12 {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:12:58.156Z","version":"dev","env":"test","msg":"ingest-email-webhook auth rejected","source":"ingest-email-webhook","feature":"auth","reason":"token mismatch"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at reject (file:///workspace/src/api/middleware/ingest-email-token.ts:61:9)
+    at file:///workspace/src/api/middleware/ingest-email-token.ts:98:5
+    at dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:23)
+    at file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:5:12 {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:12:58.156Z","version":"dev","env":"test","msg":"ingest-email-webhook auth rejected","source":"ingest-email-webhook","feature":"auth","reason":"no bearer header and no ?token= query param"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at reject (file:///workspace/src/api/middleware/ingest-email-token.ts:61:9)
+    at file:///workspace/src/api/middleware/ingest-email-token.ts:93:5
+    at dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:23)
+    at file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:5:12 {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ingest-email: wrong token -> 401 ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+ingest-email: valid token via query param -> 201 + row exists ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.198Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"<route-test-c4afad1c-e41a-4538-983e-1b2a618ed80e@example.test>","attachmentCount":0,"uploaded":0,"skipped":0}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/api/routes/ingest-email/index.ts:93:20
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ingest-email: valid token via query param -> 201 + row exists ... [0m[32mok[0m [0m[38;5;245m(48ms)[0m
+ingest-email: repost same MessageID -> 200 deduplicated + same id ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.221Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"postmark:342f8e0e-6eb4-4358-b8ec-9508788aa20a","attachmentCount":0,"uploaded":0,"skipped":0}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/api/routes/ingest-email/index.ts:93:20
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ingest-email: repost same MessageID -> 200 deduplicated + same id ... [0m[32mok[0m [0m[38;5;245m(31ms)[0m
+ingest-email: body missing everything still captures (synthetic id) ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.253Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"synthetic:475c8b0888eea0503e61c532ce73e240","attachmentCount":0,"uploaded":0,"skipped":0}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/api/routes/ingest-email/index.ts:93:20
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:12:58.279Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"synthetic:6c09fd69c219e696d917ad17e68b0fcc","attachmentCount":0,"uploaded":0,"skipped":0}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/api/routes/ingest-email/index.ts:93:20
+    at async dispatch (file:///home/user/.cache/deno/npm/registry.npmjs.org/hono/4.12.28/dist/compose.js:22:17) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+ingest-email: body missing everything still captures (synthetic id) ... [0m[32mok[0m [0m[38;5;245m(46ms)[0m
+[0m[38;5;245mrunning 3 tests from ./src/__tests__/services/credit_service_test.ts[0m
+credits: grants keyed on external_ref are idempotent under replays ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.524Z","version":"dev","env":"test","msg":"Credits granted","source":"credits","organizationId":"34a77907-d99b-411a-be96-95de54a2b373","amount":100,"reason":"credit_pack_purchase","externalRef":"cs:test_34a77907-d99b-411a-be96-95de54a2b373"}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/credit.service.ts:91:11
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/kysely.js:412:32
+    at async DefaultConnectionProvider.provideConnection (file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/driver/default-connection-provider.js:10:20) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/credit.service.ts:91:11
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/kysely.js:412:32
+    at async DefaultConnectionProvider.provideConnection (file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/driver/default-connection-provider.js:10:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+credits: grants keyed on external_ref are idempotent under replays ... [0m[32mok[0m [0m[38;5;245m(59ms)[0m
+credits: debit is atomic and never goes negative ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.561Z","version":"dev","env":"test","msg":"Credits granted","source":"credits","organizationId":"50fb26ef-64cd-445a-8985-5cff5b7940c6","amount":10,"reason":"test_grant","externalRef":"t:50fb26ef-64cd-445a-8985-5cff5b7940c6:seed"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/credit.service.ts:91:11
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/kysely.js:412:32
+    at async DefaultConnectionProvider.provideConnection (file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/driver/default-connection-provider.js:10:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+credits: debit is atomic and never goes negative ... [0m[32mok[0m [0m[38;5;245m(59ms)[0m
+credits: refund restores the balance and the ledger records everything ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:58.620Z","version":"dev","env":"test","msg":"Credits granted","source":"credits","organizationId":"2d1300e7-d3b4-419c-8d50-82a64ed77df6","amount":20,"reason":"test_grant","externalRef":"t:2d1300e7-d3b4-419c-8d50-82a64ed77df6:seed2"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/credit.service.ts:91:11
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/kysely.js:412:32
+    at async DefaultConnectionProvider.provideConnection (file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/driver/default-connection-provider.js:10:20) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:12:58.638Z","version":"dev","env":"test","msg":"Credits granted","source":"credits","organizationId":"2d1300e7-d3b4-419c-8d50-82a64ed77df6","amount":5,"reason":"tool_error_refund"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at file:///workspace/src/services/credit.service.ts:91:11
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/kysely.js:412:32
+    at async DefaultConnectionProvider.provideConnection (file:///home/user/.cache/deno/npm/registry.npmjs.org/kysely/0.27.4/dist/esm/driver/default-connection-provider.js:10:20) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+credits: refund restores the balance and the ledger records everything ... [0m[32mok[0m [0m[38;5;245m(43ms)[0m
+[0m[38;5;245mrunning 6 tests from ./src/__tests__/services/docs-chunk.test.ts[0m
+chunk: splits a doc into heading-scoped sections ... [0m[32mok[0m [0m[38;5;245m(1ms)[0m
+chunk: does NOT split inside a fenced code block ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+chunk: sub-splits a section longer than MAX_CHUNK_CHARS ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+chunk: every sub-split chunk carries its section heading (context) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+chunk: empty / whitespace doc yields no chunks ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+contentHash: stable + sensitive to change ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+[0m[38;5;245mrunning 5 tests from ./src/__tests__/services/docs-rank.test.ts[0m
+cosine: identical vectors → 1, orthogonal → 0 ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+cosine: ranks the nearer vector higher ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+cosine: zero vector → 0 (no NaN) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+keyword: scores by query-term overlap, ignores short stopwords ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+keyword: empty / stopword-only query → 0 ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+[0m[38;5;245mrunning 25 tests from ./src/__tests__/services/docs-render-html.test.ts[0m
+render-html: <script> tags are escaped, never emitted ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: <img onerror> is escaped ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: HTML inside a fenced code block is inert ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: HTML inside inline code is inert ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: HTML in link text is escaped ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: HTML in headings/tables/lists is escaped ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: javascript: links render as plain text ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: javascript: links with parens are also inert ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: data: links render as plain text ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: scheme smuggling via control chars is blocked ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: protocol-relative and bare-relative links are not linkified ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: href attribute cannot be broken out of ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: allowlisted links pass ... [0m[32mok[0m [0m[38;5;245m(14ms)[0m
+render-html: headings render at the right level ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: fenced code block with language ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: fenced code block preserves blank + markdown-looking lines ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: bold, italic, inline code ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: unordered and ordered lists ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: one level of list nesting ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: hanging-indent continuation joins the item ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: GFM table renders header and body ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: table cells run inline transforms ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: horizontal rule and paragraphs ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: blockquote ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+render-html: empty input renders to empty output ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+[0m[38;5;245mrunning 8 tests from ./src/__tests__/services/inbound-email-capture.test.ts[0m
+capture: dedup ladder -- explicit Message-ID header wins ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capture: dedup ladder -- postmark MessageID fallback ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capture: dedup ladder -- synthetic hash last resort, deterministic ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capture: generic declared type resolves via magic bytes then extension ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capture: disallowed attachment type recorded with '' sentinel, never uploaded ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.124Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"synthetic:765d7d630bcd7d87d3f950bd7893f2e4","attachmentCount":1,"uploaded":0,"skipped":1}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-capture.test.ts:145:22)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-capture.test.ts:145:22)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+capture: disallowed attachment type recorded with '' sentinel, never uploaded ... [0m[32mok[0m [0m[38;5;245m(57ms)[0m
+capture: oversized attachment recorded-not-stored ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.247Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"synthetic:05873f9f42909659e0b388f784de7cbb","attachmentCount":1,"uploaded":0,"skipped":1}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-capture.test.ts:201:22)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+capture: oversized attachment recorded-not-stored ... [0m[32mok[0m [0m[38;5;245m(119ms)[0m
+capture: storage unconfigured -> allowed attachment recorded with sentinel ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.276Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"synthetic:975d3ace38e3e8b071f9d73512ae80d4","attachmentCount":1,"uploaded":0,"skipped":1}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-capture.test.ts:243:22)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+capture: storage unconfigured -> allowed attachment recorded with sentinel ... [0m[32mok[0m [0m[38;5;245m(28ms)[0m
+capture: allowed attachment uploads with hashed-folder relative key ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.303Z","version":"dev","env":"test","msg":"inbound-email captured","source":"inbound-email","feature":"capture","messageId":"postmark:37847f02-55bc-41ca-ab00-ab6ccbc68ef8","attachmentCount":1,"uploaded":1,"skipped":0}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at captureInboundEmail (file:///workspace/src/services/inbound-email/capture.service.ts:480:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-capture.test.ts:284:22)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+capture: allowed attachment uploads with hashed-folder relative key ... [0m[32mok[0m [0m[38;5;245m(24ms)[0m
+[0m[38;5;245mrunning 7 tests from ./src/__tests__/services/inbound-email-extract.test.ts[0m
+profile registry: register/get/clear + double-register with different kind throws ... [0m[32mok[0m [0m[38;5;245m(1ms)[0m
+triage schema: data variant validates via profile schema; soft fields truncate; nullish accepts null ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+processInboundEmailBatch: no profile -> no-profile skip, rows stay received ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.580Z","version":"dev","env":"test","msg":"inbound-email extract: no extraction profile registered -- drain dormant","source":"inbound-email-extract","feature":"batch"}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at processInboundEmailBatch (file:///workspace/src/services/inbound-email/extract.service.ts:596:11)
+    at fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:221:28)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at processInboundEmailBatch (file:///workspace/src/services/inbound-email/extract.service.ts:596:11)
+    at fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:221:28)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+processInboundEmailBatch: no profile -> no-profile skip, rows stay received ... [0m[32mok[0m [0m[38;5;245m(39ms)[0m
+extractInboundEmail: data kind -> applyData invoked, status extracted + apply_result persisted ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.618Z","version":"dev","env":"test","msg":"inbound-email extract: processed","source":"inbound-email-extract","emailId":"4baca3d5-ebc7-410e-bc61-dae55635ca88","status":"extracted","kind":"test_data"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:486:9)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:287:23)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+extractInboundEmail: data kind -> applyData invoked, status extracted + apply_result persisted ... [0m[32mok[0m [0m[38;5;245m(30ms)[0m
+extractInboundEmail: human_message -> terminal status with summary as reason ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.643Z","version":"dev","env":"test","msg":"inbound-email extract: processed","source":"inbound-email-extract","emailId":"635d08e4-f116-4410-a9a4-6a86a9002a6c","status":"human_message","kind":"human_message"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:486:9)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:337:23)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+extractInboundEmail: human_message -> terminal status with summary as reason ... [0m[32mok[0m [0m[38;5;245m(24ms)[0m
+extractInboundEmail: applyData failure -> status failed with reason, row re-runnable ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"error","ts":"2026-07-13T02:12:59.660Z","version":"dev","env":"test","msg":"inbound-email extract: applyData failed","source":"inbound-email-extract","emailId":"ceddc93b-a9b4-4d71-af90-f6db10eb0dbc","error_message":"downstream table is on fire","error_stack":"Error: downstream table is on fire\n    at Object.applyData (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:367:41)\n    at extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:441:37)\n    at eventLoopTick (ext:core/01_core.js:178:7)\n    at async fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:375:23)\n    at async innerWrapped (ext:cli/40_test.js:180:5)\n    at async exitSanitizer (ext:cli/40_test.js:96:27)\n    at async outerWrapped (ext:cli/40_test.js:123:14)"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.error (file:///workspace/src/lib/logger.ts:169:5)
+    at extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:460:15)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:375:23)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+extractInboundEmail: applyData failure -> status failed with reason, row re-runnable ... [0m[32mok[0m [0m[38;5;245m(24ms)[0m
+extractInboundEmail: 402 CREDITS_EXHAUSTED -> row failed + batch drain backs off ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"warn","ts":"2026-07-13T02:12:59.685Z","version":"dev","env":"test","msg":"LLM proxy request failed","source":"llm-extraction","feature":"proxy","status":402,"model":"claude-sonnet-4-6","bodyPrefix":"{\"error\":\"CREDITS_EXHAUSTED\",\"message\":\"tenant balance depleted\"}"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at llmMessages (file:///workspace/src/services/llm/extraction.ts:360:11)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async extractStructured (file:///workspace/src/services/llm/extraction.ts:436:20)
+    at async extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:424:20) {
+  name: "NotCapable"
+}
+{"level":"warn","ts":"2026-07-13T02:12:59.686Z","version":"dev","env":"test","msg":"inbound-email extract: tenant LLM credits exhausted -- backing off","source":"inbound-email-extract","emailId":"19937cc9-4906-4eb9-ac38-9532e576e713","backoffMs":259200000}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:503:11)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:415:23)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"warn","ts":"2026-07-13T02:12:59.696Z","version":"dev","env":"test","msg":"inbound-email extract: drain paused (LLM credits exhausted backoff)","source":"inbound-email-extract","feature":"batch","resumesAt":"2026-07-16T02:12:59.686Z"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at processInboundEmailBatch (file:///workspace/src/services/inbound-email/extract.service.ts:607:11)
+    at fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:428:27)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:12:59.711Z","version":"dev","env":"test","msg":"inbound-email extract: processed","source":"inbound-email-extract","emailId":"19937cc9-4906-4eb9-ac38-9532e576e713","status":"unclear","kind":"unclear"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at extractInboundEmail (file:///workspace/src/services/inbound-email/extract.service.ts:486:9)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async fn (file:///workspace/src/__tests__/services/inbound-email-extract.test.ts:436:24)
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+extractInboundEmail: 402 CREDITS_EXHAUSTED -> row failed + batch drain backs off ... [0m[32mok[0m [0m[38;5;245m(41ms)[0m
+[0m[38;5;245mrunning 16 tests from ./src/__tests__/services/product_service_test.ts[0m
+mapStripeSubscriptionStatus: active/trialing entitle, past_due is grace, rest cancel ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+mapSubscriptionToTier: never returns a value outside the subscription_tier enum ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"warn","ts":"2026-07-13T02:12:59.897Z","version":"dev","env":"test","msg":"Unrecognized plan price; defaulting tier to PRO","source":"billing","subscriptionId":"sub_x","priceId":"price_unknown"}
+[observability] failed to ensure log dir: NotCapable: Requires write access to ".scratch/logs", run again with the --allow-write flag
+    at Object.mkdirSync (ext:deno_fs/30_fs.js:192:3)
+    at ensureDirSync (file:///workspace/src/observability/jsonl-writer.ts:39:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:77:5)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at mapSubscriptionToTier (file:///workspace/src/api/routes/billing/index.ts:627:7)
+    at file:///workspace/src/__tests__/services/product_service_test.ts:116:25
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33) {
+  name: "NotCapable"
+}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at mapSubscriptionToTier (file:///workspace/src/api/routes/billing/index.ts:627:7)
+    at file:///workspace/src/__tests__/services/product_service_test.ts:116:25
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33) {
+  name: "NotCapable"
+}
+{"level":"warn","ts":"2026-07-13T02:12:59.901Z","version":"dev","env":"test","msg":"Subscription metadata carries unknown tier; ignoring","source":"billing","subscriptionId":"sub_y","metaTier":"BUILDER"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at mapSubscriptionToTier (file:///workspace/src/api/routes/billing/index.ts:607:9)
+    at file:///workspace/src/__tests__/services/product_service_test.ts:124:25
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33) {
+  name: "NotCapable"
+}
+{"level":"warn","ts":"2026-07-13T02:12:59.901Z","version":"dev","env":"test","msg":"Unrecognized plan price; defaulting tier to PRO","source":"billing","subscriptionId":"sub_y","priceId":"price_unknown"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.warn (file:///workspace/src/lib/logger.ts:174:5)
+    at mapSubscriptionToTier (file:///workspace/src/api/routes/billing/index.ts:627:7)
+    at file:///workspace/src/__tests__/services/product_service_test.ts:124:25
+    at innerWrapped (ext:cli/40_test.js:180:11)
+    at exitSanitizer (ext:cli/40_test.js:96:33) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+mapSubscriptionToTier: never returns a value outside the subscription_tier enum ... [0m[32mok[0m [0m[38;5;245m(4ms)[0m
+createProduct: subscription product creates Stripe product + recurring price ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.931Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"332946ce-eaf4-47b6-af9b-c575ecaa82e7","productKey":"sub_product_mril87zy_1","type":"subscription"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:140:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+createProduct: subscription product creates Stripe product + recurring price ... [0m[32mok[0m [0m[38;5;245m(37ms)[0m
+createProduct: one_time product has no recurring block ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.945Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"cc13263c-3755-401c-93a1-e90108fea3b3","productKey":"onetime_mril880z_2","type":"one_time"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:168:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+createProduct: one_time product has no recurring block ... [0m[32mok[0m [0m[38;5;245m(12ms)[0m
+createProduct: validation rejects bad shapes ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+createProduct: duplicate productKey conflicts ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.959Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"aa9c29b5-ed6f-458f-8922-c3f42d900f0c","productKey":"dup_mril881c_5","type":"one_time"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:225:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+createProduct: duplicate productKey conflicts ... [0m[32mok[0m [0m[38;5;245m(17ms)[0m
+updateProduct: price change mints a new Stripe price ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:12:59.976Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"af3f8b3c-4de6-4f52-bd12-ffa7b57e4004","productKey":"reprice_mril881u_6","type":"subscription"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:245:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+updateProduct: price change mints a new Stripe price ... [0m[32mok[0m [0m[38;5;245m(21ms)[0m
+createProductCheckout: mode + metadata follow the product type ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.005Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"31500ae6-ba64-43b1-8633-3119bf3c44a4","productKey":"checkout_sub_mril882m_7","type":"subscription"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:267:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+createProductCheckout: mode + metadata follow the product type ... [0m[32mok[0m [0m[38;5;245m(34ms)[0m
+createProductCheckout: archived products are not purchasable ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.039Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"71b0b1e2-5696-4357-9ae7-b4bf44a69ced","productKey":"archived_mril883k_8","type":"one_time"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:304:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+createProductCheckout: archived products are not purchasable ... [0m[32mok[0m [0m[38;5;245m(32ms)[0m
+recordProductPurchase: idempotent under webhook replays ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.071Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"81fd55fc-f6c0-4c06-8365-b3ddcd888031","productKey":"replay_mril884h_9","type":"one_time"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:333:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:13:00.075Z","version":"dev","env":"test","msg":"Product purchase recorded","source":"product-service","organizationId":"4b10a9b5-7d4a-43b1-9edf-39e1451bbbad","productId":"81fd55fc-f6c0-4c06-8365-b3ddcd888031","checkoutSessionId":"cs_replay_81fd55fc-f6c0-4c06-8365-b3ddcd888031"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at recordProductPurchase (file:///workspace/src/services/product.service.ts:501:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:347:5
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:13:00.079Z","version":"dev","env":"test","msg":"Product purchase recorded","source":"product-service","organizationId":"4b10a9b5-7d4a-43b1-9edf-39e1451bbbad","productId":"81fd55fc-f6c0-4c06-8365-b3ddcd888031","checkoutSessionId":"cs_replay_81fd55fc-f6c0-4c06-8365-b3ddcd888031"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at recordProductPurchase (file:///workspace/src/services/product.service.ts:501:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:348:5
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+recordProductPurchase: idempotent under webhook replays ... [0m[32mok[0m [0m[38;5;245m(39ms)[0m
+subscription events: out-of-order create, then session fill, then cancel ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.110Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"72313934-3bef-46f2-84d0-133ee3b34370","productKey":"ooo_mril885k_10","type":"subscription"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:363:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+subscription events: out-of-order create, then session fill, then cancel ... [0m[32mok[0m [0m[38;5;245m(52ms)[0m
+entitlements: lapsed period end does not entitle even if cancel webhook was missed ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.163Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"fcb77bf5-e965-436d-bc09-e9bd5d63a862","productKey":"lapsed_mril8870_11","type":"subscription"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:411:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+entitlements: lapsed period end does not entitle even if cancel webhook was missed ... [0m[32mok[0m [0m[38;5;245m(34ms)[0m
+markPurchaseRefunded: refund revokes the entitlement ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.195Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"b76f994d-de17-4a74-9e85-0dde6c3e1aa7","productKey":"refund_mril887y_12","type":"one_time"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:437:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:13:00.199Z","version":"dev","env":"test","msg":"Product purchase recorded","source":"product-service","organizationId":"f8633bed-be70-48f3-9095-89012685543c","productId":"b76f994d-de17-4a74-9e85-0dde6c3e1aa7","checkoutSessionId":"cs_refund_b76f994d-de17-4a74-9e85-0dde6c3e1aa7"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at recordProductPurchase (file:///workspace/src/services/product.service.ts:501:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:445:5
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:13:00.206Z","version":"dev","env":"test","msg":"Purchase marked refunded","source":"product-service","paymentIntentId":"pi_refund_b76f994d-de17-4a74-9e85-0dde6c3e1aa7"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at markPurchaseRefunded (file:///workspace/src/services/product.service.ts:590:9)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:454:5
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+markPurchaseRefunded: refund revokes the entitlement ... [0m[32mok[0m [0m[38;5;245m(34ms)[0m
+webhook: a PRODUCT subscription event never touches the org plan tier ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.232Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"9867152e-ddc0-49ad-9c83-4500bf3336ba","productKey":"routing_mril888y_13","type":"subscription"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:467:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+webhook: a PRODUCT subscription event never touches the org plan tier ... [0m[32mok[0m [0m[38;5;245m(39ms)[0m
+webhook: a PLAN-TIER subscription event updates the org tier ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.268Z","version":"dev","env":"test","msg":"Subscription updated","source":"billing","orgId":"20757d93-e8a8-4fa1-a5fc-9d660b7b2dd0","tier":"PRO","status":"active","eventType":"customer.subscription.updated"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at handleStripeWebhookEvent (file:///workspace/src/api/routes/billing/index.ts:549:11)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:519:5
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+webhook: a PLAN-TIER subscription event updates the org tier ... [0m[32mok[0m [0m[38;5;245m(16ms)[0m
+webhook: checkout.session.completed with productId metadata records the purchase ...
+[0m[38;5;245m------- post-test output -------[0m
+{"level":"info","ts":"2026-07-13T02:13:00.288Z","version":"dev","env":"test","msg":"Product created","source":"product-service","productId":"72592859-9d60-46e0-ae81-844a62c37514","productKey":"cs_done_mril88ai_14","type":"one_time"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at createProduct (file:///workspace/src/services/product.service.ts:194:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:549:19
+    at async innerWrapped (ext:cli/40_test.js:180:5) {
+  name: "NotCapable"
+}
+{"level":"info","ts":"2026-07-13T02:13:00.292Z","version":"dev","env":"test","msg":"Product purchase recorded","source":"product-service","organizationId":"0db08573-7e78-4a93-9d58-3b8542c79869","productId":"72592859-9d60-46e0-ae81-844a62c37514","checkoutSessionId":"cs_done_72592859-9d60-46e0-ae81-844a62c37514"}
+[observability] write failed: NotCapable: Requires write access to ".scratch/logs/observability.jsonl", run again with the --allow-write flag
+    at writeFileSync (ext:deno_fs/30_fs.js:805:3)
+    at Object.writeTextFileSync (ext:deno_fs/30_fs.js:868:10)
+    at appendLineSync (file:///workspace/src/observability/jsonl-writer.ts:83:10)
+    at recordServerEvent (file:///workspace/src/observability/envelope.ts:89:3)
+    at emit (file:///workspace/src/lib/logger.ts:161:3)
+    at Object.info (file:///workspace/src/lib/logger.ts:179:5)
+    at recordProductPurchase (file:///workspace/src/services/product.service.ts:501:7)
+    at eventLoopTick (ext:core/01_core.js:178:7)
+    at async handleStripeWebhookEvent (file:///workspace/src/api/routes/billing/index.ts:447:7)
+    at async file:///workspace/src/__tests__/services/product_service_test.ts:556:5 {
+  name: "NotCapable"
+}
+[0m[38;5;245m----- post-test output end -----[0m
+webhook: checkout.session.completed with productId metadata records the purchase ... [0m[32mok[0m [0m[38;5;245m(34ms)[0m
+[0m[38;5;245mrunning 24 tests from ./src/__tests__/storage.test.ts[0m
+scopedKey: simple file name ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: nested path ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: key with allowed special chars ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects empty key ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects leading slash ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects `..` path traversal ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects `..` in nested path ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects `.` segment ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects empty segment (double slash) ... [0m[32mok[0m [0m[38;5;245m(14ms)[0m
+scopedKey: rejects backslash ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+scopedKey: rejects key over 900 chars ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+assertOwnedKey: passes a key in this project's prefix ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+assertOwnedKey: rejects a key from a different project ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+assertOwnedKey: rejects unprefixed key ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+assertOwnedKey: rejects empty ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+isStorageConfigured: true when all four R2 vars set ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+describeStorageConfig: surfaces bucket + prefix ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+getSignedDownloadUrl: URL contains prefix + SigV4 params ... [0m[32mok[0m [0m[38;5;245m(2ms)[0m
+getSignedDownloadUrl: rejects cross-tenant escape in raw key ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+getSignedDownloadUrl: includes responseDisposition when provided ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+getSignedUploadUrl: requires contentType ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+getSignedUploadUrl: signs Content-Type into the query string ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+getSignedDownloadUrl: clamps TTL to 7-day max ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+getSignedDownloadUrl: clamps non-positive TTL to 1s ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+[0m[38;5;245mrunning 23 tests from ./src/__tests__/team.test.ts[0m
+hierarchy: ranks are strictly descending owner > admin > editor > viewer ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+hierarchy: 'member' is a synonym for 'editor' (legacy backward compat) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+hierarchy: rankOf returns 0 for unknown roles (fail-closed) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+hierarchy: hasAtLeast is inclusive at the boundary ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capabilities: viewer has read but no write/team/org actions ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capabilities: admin can manage billing (product catalog) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capabilities: editor has write but no team/org actions ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capabilities: admin has team + org but is gated from owner-only ops ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+capabilities: owner has every capability ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+canManage: viewer/editor cannot manage anyone ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+canManage: owner is untouchable ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+canManage: admins can't manage other admins (only the owner can) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+canManage: admins manage editors and viewers ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+roleLabel: capitalizes + maps 'member' to 'Editor' ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+registry: every Capability is tested above (lint) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+registry: ASSIGNABLE_ROLES excludes 'owner' (invite-can-never-confer-ownership invariant) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+client mirror: web/src/lib/permissions.ts has the same capability list ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: app.ts mounts /api/invite ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: org routes guard team.* with requireCapability ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: DELETE /members/:userId soft-disconnects (does NOT hard-delete) ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: migration 003 adds 'editor' enum value + backfills 'member' ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: routes.ts wires /invite/:token + isPublicRoute prefix-matches it ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+source: Settings.svelte renders pending invites + role-update dropdowns ... [0m[32mok[0m [0m[38;5;245m(0ms)[0m
+
+[0m[32mok[0m | 161 passed | 0 failed [0m[38;5;245m(3s)[0m
+
+[0m[1m[31merror[0m: Could not resolve 'npm:mppx@0.8.5'
+
+Caused by:
+    [ERR_MODULE_NOT_FOUND] Cannot find module 'file:///home/user/.cache/deno/npm/registry.npmjs.org/mppx/0.8.5_1/index.js' imported from 'file:///workspace/src/services/mpp.service.ts'
+EXIT CODE: 1
