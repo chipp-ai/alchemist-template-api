@@ -107,8 +107,22 @@ export async function createIsolatedUser(
   };
 
   return {
-    user: userRow,
-    org: orgRow,
+    // Kysely's generated column types mark organizationId/slug as nullable
+    // (the schema allows NULL for other rows), but the values inserted
+    // above are always set for a freshly created isolated user -- use the
+    // known-non-null local values rather than the nullable row types.
+    user: {
+      id: userRow.id,
+      email: userRow.email,
+      name: userRow.name,
+      role: userRow.role,
+      organizationId: orgRow.id,
+    },
+    org: {
+      id: orgRow.id,
+      name: orgRow.name,
+      slug: orgSlug,
+    },
     cleanup,
   };
 }
