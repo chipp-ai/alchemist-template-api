@@ -1,21 +1,3 @@
-# ── SPA build stage ──
-# Builds the Svelte frontend in web/ into web/dist/ so the runtime image
-# can serve static assets at /. Without this, visiting the customer URL
-# in a browser hits the API's 404 fallback because Hono only has API
-# routes registered. The Vite output goes to web/dist/.
-FROM node:20-alpine AS web-builder
-
-WORKDIR /web
-
-# Cache dependencies — copy package manifests first so layer caching
-# survives source-only changes.
-COPY web/package.json web/package-lock.json ./
-RUN npm ci --no-audit --no-fund
-
-# Build the SPA
-COPY web/ ./
-RUN npm run build
-
 # ── Build stage: cache Deno dependencies ──
 FROM denoland/deno:2.3.1 AS builder
 
@@ -30,10 +12,6 @@ RUN deno cache --allow-import deno.json || true
 # Copy source
 COPY . .
 
-# Pull in the built SPA from the web-builder stage so `deno check` and
-# the runtime image both see web/dist/ as part of the application.
-COPY --from=web-builder /web/dist ./web/dist
-
 # Typecheck + cache the full application graph
 RUN deno check main.ts
 
@@ -46,17 +24,21 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 deno-app && \
     adduser --system --uid 1001 --ingroup deno-app deno-app
 
-# Copy compiled application (includes web/dist/ from the SPA build stage,
-# folded in during the Deno builder stage above).
+# Copy compiled application.
+# This is the headless API template: there is no frontend SPA and no
+# static file serving — only the /api/* routes mounted in app.ts.
 COPY --chown=deno-app:deno-app --from=builder /app .
-# Copy cached Deno dependencies
-COPY --chown=deno-app:deno-app --from=builder /root/.cache/deno /home/deno-app/.cache/deno
+# Copy cached Deno dependencies (DENO_DIR defaults to /deno-dir in the
+# official denoland/deno image — NOT /root/.cache/deno).
+COPY --chown=deno-app:deno-app --from=builder /deno-dir /deno-dir
 
 USER deno-app
 
-# Health check — matches the /health endpoint in src/api/routes/health/index.ts
+# Health check — matches the /health endpoint in src/api/routes/health/index.ts.
+# The denoland/deno base image has neither wget nor curl; use `deno eval`
+# (which ships with the runtime and has implicit network access) instead.
 HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:${PORT:-8000}/health || exit 1
+  CMD deno eval "fetch('http://localhost:'+(Deno.env.get('PORT')||'8000')+'/health').then(r=>Deno.exit(r.ok?0:1)).catch(()=>Deno.exit(1))"
 
 EXPOSE 8000
 
