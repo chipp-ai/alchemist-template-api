@@ -25,17 +25,20 @@ RUN addgroup --system --gid 1001 deno-app && \
     adduser --system --uid 1001 --ingroup deno-app deno-app
 
 # Copy compiled application.
-# This is the headless API template: there is no web/ SPA and no static
-# file serving — only the /api/* routes mounted in app.ts.
+# This is the headless API template: there is no frontend SPA and no
+# static file serving — only the /api/* routes mounted in app.ts.
 COPY --chown=deno-app:deno-app --from=builder /app .
-# Copy cached Deno dependencies
-COPY --chown=deno-app:deno-app --from=builder /root/.cache/deno /home/deno-app/.cache/deno
+# Copy cached Deno dependencies (DENO_DIR defaults to /deno-dir in the
+# official denoland/deno image — NOT /root/.cache/deno).
+COPY --chown=deno-app:deno-app --from=builder /deno-dir /deno-dir
 
 USER deno-app
 
-# Health check — matches the /health endpoint in src/api/routes/health/index.ts
+# Health check — matches the /health endpoint in src/api/routes/health/index.ts.
+# The denoland/deno base image has neither wget nor curl; use `deno eval`
+# (which ships with the runtime and has implicit network access) instead.
 HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:${PORT:-8000}/health || exit 1
+  CMD deno eval "fetch('http://localhost:'+(Deno.env.get('PORT')||'8000')+'/health').then(r=>Deno.exit(r.ok?0:1)).catch(()=>Deno.exit(1))"
 
 EXPOSE 8000
 
