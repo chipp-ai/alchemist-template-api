@@ -323,22 +323,6 @@
     "math-intrinsics@1.1.0": {
       "integrity": "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="
     },
-    "mppx@0.8.5_hono@4.12.28_viem@2.54.6__zod@4.4.3": {
-      "integrity": "sha512-36trgc3CCIWzPnrYKNdYGl9jszAes+wNJsRR9XPvcu3oxTBeNWe0Xol7nyETleY3YBg5FpZXSuGs1bdCq0zuXA==",
-      "dependencies": [
-        "@stripe/stripe-js",
-        "eventsource-parser",
-        "hono",
-        "incur",
-        "ox@0.14.29_zod@4.4.3",
-        "viem",
-        "zod@4.4.3"
-      ],
-      "optionalPeers": [
-        "hono"
-      ],
-      "bin": true
-    },
     "mppx@0.8.5_hono@4.12.28_viem@2.54.6__zod@4.4.3_zod@4.4.3": {
       "integrity": "sha512-36trgc3CCIWzPnrYKNdYGl9jszAes+wNJsRR9XPvcu3oxTBeNWe0Xol7nyETleY3YBg5FpZXSuGs1bdCq0zuXA==",
       "dependencies": [
