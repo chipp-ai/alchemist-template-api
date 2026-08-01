@@ -160,6 +160,42 @@ endpoint list in docs. The renderer (`src/services/docs/render-html.ts`) is
 the SECURITY BOUNDARY: escape-first, no raw-HTML passthrough, allowlisted
 link schemes only -- never render docs markdown to HTML any other way.
 
+### Chipp Insights beacon
+
+If a `chipp-insights.json` file exists at the repo root (shaped
+`{"telemetryPublicKey": "tk_pub_..."}`), the Alchemist AI platform-injected
+file activates a tiny first-party analytics beacon on every server-rendered
+`/docs` page: a `<script src="https://build.chipp.ai/i/beacon.js"
+data-project-key="...">` tag in `<head>`, and an inline
+`window.chippInsights?.identify(email)` call near the end of `<body>`
+whenever the request carries an authenticated session cookie. Resolution +
+rendering live in `src/services/insights.ts`, wired into the `shell()`
+function in `src/api/routes/docs-html/index.ts`. The key is read ONCE at
+module load and cached; a missing or malformed file is NOT an error --
+fail-open, no log line either way, since the overwhelming majority of
+projects (including local dev) never have this file.
+
+**Why the identify call fires on every authenticated page view instead of
+"on login" the way other Alchemist templates wire it:** this template is
+headless -- auth is a pure JSON API (`/api/auth/*`) with no browser-executed
+login flow anywhere in this codebase (no `web/`, no HTML form, no client JS
+that runs a login request and then calls `identify()` on success). The
+`/docs` pages are the only served HTML surface with session awareness
+(`authMiddleware` resolves `c.get("user")` when a cookie is present), so
+identifying on every page render where a session already exists is the
+honest analog here. If you ever add a browser-executed login flow to this
+project, move the identify call to fire once at that point instead (mirror
+the pattern the `web-app` / `mcp-server` templates use) rather than leaving
+both.
+
+The `GET /api/billing/purchase/complete` Stripe-return page
+(`src/api/routes/billing/index.ts`) is a second HTML surface in this repo
+but is deliberately NOT wired with the beacon: it's the return page for the
+`mppPaid` machine-payment middleware, so it's commonly hit by account-free
+agent callers with no session at all -- there's nothing meaningful to
+identify there, and pageview volume on a transient redirect page isn't a
+useful signal.
+
 ## Database Conventions
 
 > **Detailed database rules live in `.claude/rules/database.md`** (Postgres

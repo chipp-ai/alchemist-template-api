@@ -40,6 +40,11 @@ import { BRAND } from "@/config/brand.ts";
 import { authMiddleware } from "@/api/middleware/auth.ts";
 import { DOCS_PAGES, type DocPage, findDoc } from "@/services/docs/registry.ts";
 import { escapeHtml, renderMarkdownToHtml } from "@/services/docs/render-html.ts";
+import {
+  getInsightsPublicKey,
+  renderInsightsIdentifyScript,
+  renderInsightsScriptTag,
+} from "@/services/insights.ts";
 
 // ── Endpoint-source injection (see module doc for why) ──
 
@@ -102,6 +107,14 @@ function hasSession(c: Context): boolean {
   return Boolean((c as unknown as { get: (k: string) => unknown }).get("user"));
 }
 
+/** The current session's email, or null when the request is unauthenticated. */
+function getSessionEmail(c: Context): string | null {
+  const user = (c as unknown as { get: (k: string) => unknown }).get("user") as
+    | { email?: unknown }
+    | undefined;
+  return typeof user?.email === "string" ? user.email : null;
+}
+
 // ── HTML shell ──
 
 /** Env-sourced brand colors go into inline CSS -- validate the shape first. */
@@ -109,16 +122,27 @@ function cssColor(value: string, fallback: string): string {
   return /^#[0-9a-fA-F]{3,8}$/.test(value) ? value : fallback;
 }
 
-function shell(title: string, content: string): string {
+/**
+ * @param email The current request's authenticated session email, or null
+ *   for an anonymous visitor. Passed straight through to
+ *   `renderInsightsIdentifyScript` -- see `src/services/insights.ts` for
+ *   why a headless template identifies on page view rather than "on
+ *   login" (there is no browser-executed login flow here to hook).
+ */
+function shell(title: string, content: string, email: string | null = null): string {
   const brandName = escapeHtml(BRAND.name);
   const primary = cssColor(BRAND.primaryColor, "#4f46e5");
   const neutral = cssColor(BRAND.neutralColor, "#1f2937");
+  const insightsKey = getInsightsPublicKey();
+  const insightsScriptTag = renderInsightsScriptTag(insightsKey);
+  const insightsIdentifyScript = email ? renderInsightsIdentifyScript(insightsKey, email) : "";
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)} | ${brandName}</title>
+${insightsScriptTag}
 <style>
   :root { --primary: ${primary}; --ink: ${neutral}; }
   * { box-sizing: border-box; }
@@ -167,6 +191,7 @@ function shell(title: string, content: string): string {
 ${content}
 </main>
 <footer><div class="inner">Powered by ${brandName}</div></footer>
+${insightsIdentifyScript}
 </body>
 </html>`;
 }
@@ -174,7 +199,11 @@ ${content}
 /** Uniform HTML 404 -- used for unknown slugs AND auth-gated pages alike. */
 function htmlNotFound(c: Context): Response {
   return c.html(
-    shell("Not found", `<h1>Page not found</h1><p>No documentation page exists at this address. <a href="/docs">Back to the docs index</a>.</p>`),
+    shell(
+      "Not found",
+      `<h1>Page not found</h1><p>No documentation page exists at this address. <a href="/docs">Back to the docs index</a>.</p>`,
+      getSessionEmail(c),
+    ),
     404,
   );
 }
@@ -185,6 +214,7 @@ function htmlNotFound(c: Context): Response {
 // to the live endpoint index. Auth-gated pages are hidden from the public
 // index (they uniformly 404 anyway -- no dead links).
 docsHtmlRoutes.get("/", (c) => {
+  const email = getSessionEmail(c);
   const authed = hasSession(c);
   const visible = DOCS_PAGES.filter((p) => !p.requiresAuth || authed);
 
@@ -215,7 +245,9 @@ docsHtmlRoutes.get("/", (c) => {
   const endpointsHtml = `<section class="group"><h2>API</h2>
 <div class="toc-item"><a href="/docs/endpoints">Endpoint index</a><p>Every mounted /api/* route, generated live from the app's route table.</p></div></section>`;
 
-  return c.html(shell("Documentation", `<h1>Documentation</h1>\n${groupHtml}\n${endpointsHtml}`));
+  return c.html(
+    shell("Documentation", `<h1>Documentation</h1>\n${groupHtml}\n${endpointsHtml}`, email),
+  );
 });
 
 // Dynamic endpoint index. Registered BEFORE /:slug so a registry page can
@@ -238,7 +270,7 @@ docsHtmlRoutes.get("/endpoints", (c) => {
 matches the deployed code. Auth, request/response shapes, and error codes are
 in the <a href="/docs/api-reference">API reference</a>.</p>
 ${sections || "<p><em>No endpoints registered.</em></p>"}`;
-  return c.html(shell("Endpoint index", body));
+  return c.html(shell("Endpoint index", body, getSessionEmail(c)));
 });
 
 // One page. Unknown slug and auth-gated-without-session are the SAME 404.
@@ -247,7 +279,7 @@ docsHtmlRoutes.get("/:slug", (c) => {
   if (!page) return htmlNotFound(c);
   if (page.requiresAuth && !hasSession(c)) return htmlNotFound(c);
   const body = `<p><a href="/docs">&larr; All docs</a></p>\n${renderMarkdownToHtml(page.body)}`;
-  return c.html(shell(page.title, body));
+  return c.html(shell(page.title, body, getSessionEmail(c)));
 });
 
 export { docsHtmlRoutes };
